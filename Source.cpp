@@ -3,6 +3,7 @@
 #include <string.h>
 #include <conio.h>
 #include <windows.h>
+#include <time.h>
 
 #define UP 72
 #define LEFT 75
@@ -11,6 +12,20 @@
 #define SPACE 57
 
 #define BUFFER_SIZE 10000
+
+#define EASY_WIDTH 4
+#define EASY_NORMAL_HEIGHT 4
+#define NORMAL_WIDTH 6
+#define HARD_WIDTH 8
+#define HARD_HEIGHT 5
+
+char EasyCard[EASY_NORMAL_HEIGHT][EASY_WIDTH];		// Easy 4 X 4
+char NormalCard[EASY_NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 6 X 4
+char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 8 X 5
+
+char key = 0;
+void How();
+void Postion(Diff diff);
 
 typedef struct SelectCard
 {
@@ -37,6 +52,13 @@ enum Button
 {
 	GameStart,
 	HowToPlay
+};
+
+enum Diff
+{
+	Easy,
+	Normal,
+	Hard
 };
 
 // 버퍼의 크기
@@ -164,23 +186,22 @@ void PrintfScreen(int x, int y, const char* string)
 	);
 }
 
-void LoadFile(const char* fileName)
-{
-	// data.txt 파일을 열어주고 r(읽기) 모드로 설정합니다.
-	FILE* file = fopen(fileName, "r");
-
-	char buffer[BUFFER_SIZE] = { 0, };
-
-	fread(buffer, 1, BUFFER_SIZE, file); // 전체 파일을 읽어주는 함수
-
-	printf("%s", buffer);
-
-	fclose(file);
-}
+//void LoadFile(const char* fileName)
+//{
+//	// data.txt 파일을 열어주고 r(읽기) 모드로 설정합니다.
+//	FILE* file = fopen(fileName, "r");
+//
+//	char buffer[BUFFER_SIZE] = { 0, };
+//
+//	fread(buffer, 1, BUFFER_SIZE, file); // 전체 파일을 읽어주는 함수
+//
+//	printf("%s", buffer);
+//
+//	fclose(file);
+//}
 
 void KeyboardMain(SelectCard* Select)
 {
-	char key = 0;
 	Button button;
 	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
@@ -196,7 +217,7 @@ void KeyboardMain(SelectCard* Select)
 		{
 		case SPACE: switch (button)
 					{
-					case GameStart: SelectDiff();
+					case GameStart: SelectDiff(Select);
 						break;
 					case HowToPlay: How();
 						break;
@@ -217,25 +238,308 @@ void KeyboardMain(SelectCard* Select)
 	}
 }
 
-void SelectDiff() // 난이도 선택
+void SelectDiff(SelectCard* Select) // 난이도 선택
 {
-	printf("난이도 선택\n");
-	printf("Easy\tNormal\tHard");
+	Diff diff;
+	switch (key)
+	{
+	case SPACE: CreateCard(diff);
+		break;
 
+	default:
+		break;
+	}
 }
 
 void How() // 게임 방법 설명
 {
-	printf("1. 카드 한 장을 선택 후 다른 카드 한 장을 선택합니다.\n    * 처음 선택한 카드를 다시 선택한다면 처음 선택할 카드를 다시 선택할 수 있습니다.\n2. 두 장의 카드의 모양이 서로 같다면 카드는 사라지고 다르다면 사라지지 않습니다.")
+	printf("1. 카드 한 장을 선택 후 다른 카드 한 장을 선택합니다.\n    * 처음 선택한 카드를 다시 선택하면 취소하고 다른 카드를 선택할 수 있습니다.\n2. 두 장의 카드의 모양이 서로 같다면 카드는 사라지고 다르다면 사라지지 않습니다.");
 }
 
 // 카드 배치
-void CreateCard()
+void CreateCard(enum Diff diff)
 {
-	strcpy(Card[0], "0123456789");
-	strcpy(Card[1], "0123456789");
-	strcpy(Card[2], "ABCDEFGHIJ");
-	strcpy(Card[3], "ABCDEFGHIJ");
+	switch (diff)
+	{
+	case Easy: Postion(diff);
+		break;
+		
+	case Normal: Postion(diff);
+		break;
+
+	case Hard: Postion(diff);
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Position(Diff diff)
+{
+	srand(time(NULL));
+	switch (diff)
+	{
+	case Easy:		int EasyPost[8] = { 0,0,0,0,0,0,0,0 };
+
+					for (int i = 0; i < EASY_NORMAL_HEIGHT; i++)
+					{
+						for (int j = 0; j < EASY_WIDTH; j++)
+						{
+							int Card = rand() % 8;
+							switch (Card)
+							{
+							case 0: if (EasyPost[0] < 2)
+									{
+										EasyPost[0]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 1: if (EasyPost[1] < 2)
+									{
+										EasyPost[1]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 2: if (EasyPost[2] < 2)
+									{
+										EasyPost[2]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 3:	if (EasyPost[3] < 2)
+									{
+										EasyPost[3]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 4:	if (EasyPost[4] < 2)
+									{
+										EasyPost[4]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 5:	if (EasyPost[5] < 2)
+									{
+										EasyPost[5]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 6:	if (EasyPost[6] < 2)
+									{
+										EasyPost[6]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							case 7:	if (EasyPost[7] < 2)
+									{
+										EasyPost[7]++;
+										EasyCard[i][j] = Card;
+									}
+									else
+									{
+										j--;
+									}
+								break;
+
+							default:
+								break;
+
+							}
+						}
+					}
+		break;
+
+	case Normal:	int NormalPost[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
+
+				   for (int i = 0; i < EASY_NORMAL_HEIGHT; i++)
+				   {
+					   for (int j = 0; j < NORMAL_WIDTH; j++)
+					   {
+						   int Card = rand() % 12;
+						   switch (Card)
+						   {
+						   case 0: if (NormalPost[0] < 2)
+						   {
+							   NormalPost[0]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 1: if (NormalPost[1] < 2)
+						   {
+							   NormalPost[1]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 2: if (NormalPost[2] < 2)
+						   {
+							   NormalPost[2]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 3:	if (NormalPost[3] < 2)
+						   {
+							   NormalPost[3]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 4:	if (NormalPost[4] < 2)
+						   {
+							   NormalPost[4]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 5:	if (NormalPost[5] < 2)
+						   {
+							   NormalPost[5]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 6:	if (NormalPost[6] < 2)
+						   {
+							   NormalPost[6]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 7:	if (NormalPost[7] < 2)
+						   {
+							   NormalPost[7]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 8:	if (NormalPost[8] < 2)
+						   {
+							   NormalPost[8]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 9:	if (NormalPost[9] < 2)
+						   {
+							   NormalPost[9]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 10:	if (NormalPost[10] < 2)
+						   {
+							   NormalPost[10]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   case 11:	if (NormalPost[11] < 2)
+						   {
+							   NormalPost[11]++;
+							   NormalCard[i][j] = Card;
+						   }
+								 else
+						   {
+							   j--;
+						   }
+								 break;
+
+						   default:
+							   break;
+
+						   }
+					   }
+				   }
+			break;
+
+	case Hard:
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Render()
@@ -265,13 +569,13 @@ void Render()
 int main()
 {
 	SelectCard Select = { 10, 10, "□" };
-
-	LoadFile(".txt");
+	Diff diff;
+	// LoadFile(".txt");
 	KeyboardMain(&Select);
-
+	CreateCard(diff);
 	while (1)
 	{
-
+		Render();
 	}
 	return 0;
 }
