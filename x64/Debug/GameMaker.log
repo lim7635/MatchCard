@@ -1,11 +1,40 @@
 ﻿  Source.cpp
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(28,21): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(28,24): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(40,17): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(40,24): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(43,30): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(43,42): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(122,27): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(122,30): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\새 폴더\MatchCard\Source.cpp(132,9): warning C4267: '인수': 'size_t'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  GameMaker.vcxproj -> C:\Users\Administrator\Desktop\새 폴더\MatchCard\x64\Debug\GameMaker.exe
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(28,6): error C2182: 'Postion': 이 'void' 사용은 유효하지 않습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(28,14): error C2065: 'Diff': 선언되지 않은 식별자입니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(28,19): error C2146: 구문 오류: ')'이(가) 'diff' 식별자 앞에 없습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(29,6): error C2182: 'Render': 이 'void' 사용은 유효하지 않습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(29,13): error C2065: 'Diff': 선언되지 않은 식별자입니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(29,18): error C2146: 구문 오류: ')'이(가) 'diff' 식별자 앞에 없습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(80,21): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(80,24): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(92,17): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(92,24): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(95,30): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(95,42): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(174,27): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(174,30): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(184,9): warning C4267: '인수': 'size_t'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(221,22): error C3861: 'SelectDiff': 식별자를 찾을 수 없습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(225,10): error C2059: 구문 오류: ':'
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(227,10): error C2059: 구문 오류: ':'
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(229,10): error C2059: 구문 오류: ':'
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(259,14): error C3861: 'CreateCard': 식별자를 찾을 수 없습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(277,13): error C2064: 항은 1개의 인수를 받아들이는 함수로 계산되지 않습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(280,15): error C2064: 항은 1개의 인수를 받아들이는 함수로 계산되지 않습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(283,13): error C2064: 항은 1개의 인수를 받아들이는 함수로 계산되지 않습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(293,12): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(401,2): error C2360: 'EasyPost' 초기화가 'case' 레이블에 의해 생략되었습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(296,18): message : 'EasyPost' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(550,2): error C2360: 'NormalPost' 초기화가 'case' 레이블에 의해 생략되었습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(401,19): message : 'NormalPost' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(550,2): error C2360: 'EasyPost' 초기화가 'case' 레이블에 의해 생략되었습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(296,18): message : 'EasyPost' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(787,2): error C2361: 'HardPost' 초기화가 'default' 레이블에 의해 생략되었습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(550,18): message : 'HardPost' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(787,2): error C2361: 'NormalPost' 초기화가 'default' 레이블에 의해 생략되었습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(401,19): message : 'NormalPost' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(787,2): error C2361: 'EasyPost' 초기화가 'default' 레이블에 의해 생략되었습니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(296,18): message : 'EasyPost' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(792,6): error C2365: 'Render': 재정의: 이전 정의는 '데이터 변수'입니다.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(29,6): message : 'Render' 선언을 참조하십시오.
+C:\Users\Administrator\Desktop\MatchCard\Source.cpp(1001,3): error C2064: 항은 1개의 인수를 받아들이는 함수로 계산되지 않습니다.

@@ -25,7 +25,8 @@ char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 8 X 5
 
 char key = 0;
 void How();
-void Postion(Diff diff);
+void CreateCard();
+void Render(Diff diff);
 
 typedef struct SelectCard
 {
@@ -51,7 +52,8 @@ enum Color
 enum Button
 {
 	GameStart,
-	HowToPlay
+	HowToPlay,
+	InGame
 };
 
 enum Diff
@@ -203,6 +205,7 @@ void PrintfScreen(int x, int y, const char* string)
 void KeyboardMain(SelectCard* Select)
 {
 	Button button;
+	Diff diff;
 	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
 		key = _getch(); // key 입력을 받아주는 함수
@@ -217,10 +220,18 @@ void KeyboardMain(SelectCard* Select)
 		{
 		case SPACE: switch (button)
 					{
-					case GameStart: SelectDiff(Select);
+					case GameStart: system("cls");
+									SelectDiff();
 						break;
-					case HowToPlay: How();
+
+					case HowToPlay: system("cls");
+									How();
 						break;
+
+					case InGame:	system("cls");
+									KeyboardInGame(Select);
+						break;
+
 					default:
 						break;
 					}
@@ -238,16 +249,52 @@ void KeyboardMain(SelectCard* Select)
 	}
 }
 
-void SelectDiff(SelectCard* Select) // 난이도 선택
+void KeyboardInGame(SelectCard* Select)
 {
 	Diff diff;
-	switch (key)
+	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
-	case SPACE: CreateCard(diff);
-		break;
+		key = _getch(); // key 입력을 받아주는 함수
+		system("cls");
 
-	default:
-		break;
+		if (key == -32)
+		{
+			key = _getch();
+		}
+
+		switch (key)
+		{
+		case SPACE: switch (diff)
+					{
+					case Easy: 
+						break;
+
+					case Normal:
+						break;
+
+					case Hard:
+						break;
+
+					default:
+						break;
+					}
+			break;
+
+		case UP: if (Select->y - 1 >= 0) { Select->y--; }
+			   break;
+
+		case DOWN: Select->y++;
+			break;
+
+		case LEFT: if (Select->x / 2 - 1 >= 0) { Select->x -= 2; }
+				 break;
+
+		case RIGHT: Select->x += 2;
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
@@ -256,26 +303,56 @@ void How() // 게임 방법 설명
 	printf("1. 카드 한 장을 선택 후 다른 카드 한 장을 선택합니다.\n    * 처음 선택한 카드를 다시 선택하면 취소하고 다른 카드를 선택할 수 있습니다.\n2. 두 장의 카드의 모양이 서로 같다면 카드는 사라지고 다르다면 사라지지 않습니다.");
 }
 
-// 카드 배치
-void CreateCard(enum Diff diff)
+// 난이도 선택
+void SelectDiff()
 {
-	switch (diff)
+	Diff diff;
+	SelectCard Select;
+	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
-	case Easy: Postion(diff);
-		break;
-		
-	case Normal: Postion(diff);
-		break;
+		key = _getch(); // key 입력을 받아주는 함수
+		system("cls");
 
-	case Hard: Postion(diff);
-		break;
+		if (key == -32)
+		{
+			key = _getch();
+		}
 
-	default:
-		break;
+		switch (key)
+		{
+		case SPACE: switch (diff)
+					{
+					case Easy:	system("cls");
+								CreateCard(Easy);
+						break;
+
+					case Normal:system("cls");
+								CreateCard(Normal);
+						break;
+
+					case Hard:	system("cls");
+								CreateCard(Hard);
+						break;
+
+					default:
+						break;
+					}
+			break;
+
+		case UP: Select.y--;
+			break;
+
+		case DOWN: Select.y++;
+			break;
+
+		default:
+			break;
+		}
 	}
 }
 
-void Position(Diff diff)
+// 카드 배치
+void CreateCard(enum Diff diff)
 {
 	srand(time(NULL));
 	switch (diff)
@@ -292,7 +369,7 @@ void Position(Diff diff)
 							case 0: if (EasyPost[0] < 2)
 									{
 										EasyPost[0]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '0';
 									}
 									else
 									{
@@ -303,7 +380,7 @@ void Position(Diff diff)
 							case 1: if (EasyPost[1] < 2)
 									{
 										EasyPost[1]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '1';
 									}
 									else
 									{
@@ -314,7 +391,7 @@ void Position(Diff diff)
 							case 2: if (EasyPost[2] < 2)
 									{
 										EasyPost[2]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '2';
 									}
 									else
 									{
@@ -325,7 +402,7 @@ void Position(Diff diff)
 							case 3:	if (EasyPost[3] < 2)
 									{
 										EasyPost[3]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '3';
 									}
 									else
 									{
@@ -336,7 +413,7 @@ void Position(Diff diff)
 							case 4:	if (EasyPost[4] < 2)
 									{
 										EasyPost[4]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '4';
 									}
 									else
 									{
@@ -347,7 +424,7 @@ void Position(Diff diff)
 							case 5:	if (EasyPost[5] < 2)
 									{
 										EasyPost[5]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '5';
 									}
 									else
 									{
@@ -358,7 +435,7 @@ void Position(Diff diff)
 							case 6:	if (EasyPost[6] < 2)
 									{
 										EasyPost[6]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '6';
 									}
 									else
 									{
@@ -369,7 +446,7 @@ void Position(Diff diff)
 							case 7:	if (EasyPost[7] < 2)
 									{
 										EasyPost[7]++;
-										EasyCard[i][j] = Card;
+										EasyCard[i][j] = '7';
 									}
 									else
 									{
@@ -397,7 +474,7 @@ void Position(Diff diff)
 						   case 0: if (NormalPost[0] < 2)
 						   {
 							   NormalPost[0]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '0';
 						   }
 								 else
 						   {
@@ -408,7 +485,7 @@ void Position(Diff diff)
 						   case 1: if (NormalPost[1] < 2)
 						   {
 							   NormalPost[1]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '1';
 						   }
 								 else
 						   {
@@ -419,7 +496,7 @@ void Position(Diff diff)
 						   case 2: if (NormalPost[2] < 2)
 						   {
 							   NormalPost[2]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '2';
 						   }
 								 else
 						   {
@@ -430,7 +507,7 @@ void Position(Diff diff)
 						   case 3:	if (NormalPost[3] < 2)
 						   {
 							   NormalPost[3]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '3';
 						   }
 								 else
 						   {
@@ -441,7 +518,7 @@ void Position(Diff diff)
 						   case 4:	if (NormalPost[4] < 2)
 						   {
 							   NormalPost[4]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '4';
 						   }
 								 else
 						   {
@@ -452,7 +529,7 @@ void Position(Diff diff)
 						   case 5:	if (NormalPost[5] < 2)
 						   {
 							   NormalPost[5]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '5';
 						   }
 								 else
 						   {
@@ -463,7 +540,7 @@ void Position(Diff diff)
 						   case 6:	if (NormalPost[6] < 2)
 						   {
 							   NormalPost[6]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '6';
 						   }
 								 else
 						   {
@@ -474,7 +551,7 @@ void Position(Diff diff)
 						   case 7:	if (NormalPost[7] < 2)
 						   {
 							   NormalPost[7]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '7';
 						   }
 								 else
 						   {
@@ -485,7 +562,7 @@ void Position(Diff diff)
 						   case 8:	if (NormalPost[8] < 2)
 						   {
 							   NormalPost[8]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '8';
 						   }
 								 else
 						   {
@@ -496,7 +573,7 @@ void Position(Diff diff)
 						   case 9:	if (NormalPost[9] < 2)
 						   {
 							   NormalPost[9]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = '9';
 						   }
 								 else
 						   {
@@ -507,7 +584,7 @@ void Position(Diff diff)
 						   case 10:	if (NormalPost[10] < 2)
 						   {
 							   NormalPost[10]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = 'A';
 						   }
 								 else
 						   {
@@ -518,7 +595,7 @@ void Position(Diff diff)
 						   case 11:	if (NormalPost[11] < 2)
 						   {
 							   NormalPost[11]++;
-							   NormalCard[i][j] = Card;
+							   NormalCard[i][j] = 'B';
 						   }
 								 else
 						   {
@@ -532,9 +609,243 @@ void Position(Diff diff)
 						   }
 					   }
 				   }
-			break;
+		break;
 
-	case Hard:
+	case Hard:		int HardPost[20] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+
+				 for (int i = 0; i < HARD_HEIGHT; i++)
+				 {
+					 for (int j = 0; j < HARD_WIDTH; j++)
+					 {
+						 int Card = rand() % 20;
+						 switch (Card)
+						 {
+						 case 0: if (HardPost[0] < 2)
+						 {
+							 HardPost[0]++;
+							 HardCard[i][j] = '0';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 1: if (HardPost[1] < 2)
+						 {
+							 HardPost[1]++;
+							 HardCard[i][j] = '1';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 2: if (HardPost[2] < 2)
+						 {
+							 HardPost[2]++;
+							 HardCard[i][j] = '2';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 3:	if (HardPost[3] < 2)
+						 {
+							 HardPost[3]++;
+							 HardCard[i][j] = '3';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 4:	if (HardPost[4] < 2)
+						 {
+							 HardPost[4]++;
+							 HardCard[i][j] = '4';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 5:	if (HardPost[5] < 2)
+						 {
+							 HardPost[5]++;
+							 HardCard[i][j] = '5';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 6:	if (HardPost[6] < 2)
+						 {
+							 HardPost[6]++;
+							 HardCard[i][j] = '6';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 7:	if (HardPost[7] < 2)
+						 {
+							 HardPost[7]++;
+							 HardCard[i][j] = '7';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 8:	if (HardPost[8] < 2)
+						 {
+							 HardPost[8]++;
+							 HardCard[i][j] = '8';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 9:	if (HardPost[9] < 2)
+						 {
+							 HardPost[9]++;
+							 HardCard[i][j] = '9';
+						 }
+							   else
+						 {
+							 j--;
+						 }
+							   break;
+
+						 case 10:	if (HardPost[10] < 2)
+						 {
+							 HardPost[10]++;
+							 HardCard[i][j] = 'A';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 11:	if (HardPost[11] < 2)
+						 {
+							 HardPost[11]++;
+							 HardCard[i][j] = 'B';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 12:	if (HardPost[12] < 2)
+						 {
+							 HardPost[12]++;
+							 HardCard[i][j] = 'C';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 13:	if (HardPost[13] < 2)
+						 {
+							 HardPost[13]++;
+							 HardCard[i][j] = 'D';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 14:	if (HardPost[14] < 2)
+						 {
+							 HardPost[14]++;
+							 HardCard[i][j] = 'E';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 15:	if (HardPost[15] < 2)
+						 {
+							 HardPost[15]++;
+							 HardCard[i][j] = 'F';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 16:	if (HardPost[16] < 2)
+						 {
+							 HardPost[16]++;
+							 HardCard[i][j] = 'G';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 17:	if (HardPost[17] < 2)
+						 {
+							 HardPost[17]++;
+							 HardCard[i][j] = 'H';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 18:	if (HardPost[18] < 2)
+						 {
+							 HardPost[18]++;
+							 HardCard[i][j] = 'I';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 case 19:	if (HardPost[19] < 2)
+						 {
+							 HardPost[19]++;
+							 HardCard[i][j] = 'J';
+						 }
+								else
+						 {
+							 j--;
+						 }
+								break;
+
+						 default:
+							 break;
+
+						 }
+					 }
+				 }
 		break;
 
 	default:
@@ -542,28 +853,205 @@ void Position(Diff diff)
 	}
 }
 
-void Render()
+// 카드 이미지 변경 후 출력
+void Render(Diff diff)
 {
-	for (int i = 0; i < 4; i++)
+	switch (diff)
 	{
-		for (int j = 0; j < 10; j++)
+	case Easy: for (int i = 0; i < EASY_NORMAL_HEIGHT; i++)
+				{
+					for (int j = 0; j < EASY_WIDTH; j++)
+					{
+						if (EasyCard[i][j] == '0')
+						{
+
+							printf("★");
+						}
+						else if (EasyCard[i][j] == '1')
+						{
+							printf("●");
+						}
+						else if (EasyCard[i][j] == '2')
+						{
+							printf("♣");
+						}
+						else if (EasyCard[i][j] == '3')
+						{
+							printf("♥");
+						}
+						else if (EasyCard[i][j] == '4')
+						{
+							printf("■");
+						}
+						else if (EasyCard[i][j] == '5')
+						{
+							printf("◆");
+						}
+						else if (EasyCard[i][j] == '6')
+						{
+							printf("▲");
+						}
+						else if (EasyCard[i][j] == '7')
+						{
+							printf("◎");
+						}
+					}
+					printf("\n");
+				}
+		break;
+
+	case Normal: for (int i = 0; i < EASY_NORMAL_HEIGHT; i++)
+	{
+		for (int j = 0; j < NORMAL_WIDTH; j++)
 		{
-			if (Card[i][j] == '0')
+			if (NormalCard[i][j] == '0')
 			{
 
-				printf("  ");
+				printf("★");
 			}
-			else if (Card[i][j] == '1')
+			else if (NormalCard[i][j] == '1')
 			{
-				printf("▥");
+				printf("●");
 			}
-			else if (Card[i][j] == '2')
+			else if (NormalCard[i][j] == '2')
+			{
+				printf("♣");
+			}
+			else if (NormalCard[i][j] == '3')
+			{
+				printf("♥");
+			}
+			else if (NormalCard[i][j] == '4')
+			{
+				printf("■");
+			}
+			else if (NormalCard[i][j] == '5')
+			{
+				printf("◆");
+			}
+			else if (NormalCard[i][j] == '6')
+			{
+				printf("▲");
+			}
+			else if (NormalCard[i][j] == '7')
 			{
 				printf("◎");
+			}
+			else if (NormalCard[i][j] == '8')
+			{
+				printf("♣");
+			}
+			else if (NormalCard[i][j] == '9')
+			{
+				printf("※");
+			}
+			else if (NormalCard[i][j] == 'A')
+			{
+				printf("Ａ"); // 특수문자 형태 A
+			}
+			else if (NormalCard[i][j] == 'B')
+			{
+				printf("Ｂ"); // 특수문자 형태 B
 			}
 		}
 		printf("\n");
 	}
+		break;
+
+	case Hard: for (int i = 0; i < HARD_HEIGHT; i++)
+	{
+		for (int j = 0; j < HARD_WIDTH; j++)
+		{
+			if (NormalCard[i][j] == '0')
+			{
+
+				printf("★");
+			}
+			else if (NormalCard[i][j] == '1')
+			{
+				printf("●");
+			}
+			else if (NormalCard[i][j] == '2')
+			{
+				printf("♣");
+			}
+			else if (NormalCard[i][j] == '3')
+			{
+				printf("♥");
+			}
+			else if (NormalCard[i][j] == '4')
+			{
+				printf("■");
+			}
+			else if (NormalCard[i][j] == '5')
+			{
+				printf("◆");
+			}
+			else if (NormalCard[i][j] == '6')
+			{
+				printf("▲");
+			}
+			else if (NormalCard[i][j] == '7')
+			{
+				printf("◎");
+			}
+			else if (NormalCard[i][j] == '8')
+			{
+				printf("♣");
+			}
+			else if (NormalCard[i][j] == '9')
+			{
+				printf("※");
+			}
+			else if (NormalCard[i][j] == 'A')
+			{
+				printf("Ａ"); // 특수문자 형태 A
+			}
+			else if (NormalCard[i][j] == 'B')
+			{
+				printf("Ｂ"); // 특수문자 형태 B
+			}
+			else if (NormalCard[i][j] == 'C')
+			{
+				printf("Ｃ"); // 특수문자 형태 C
+			}
+			else if (NormalCard[i][j] == 'D')
+			{
+				printf("Ｄ"); // 특수문자 형태 D
+			}
+			else if (NormalCard[i][j] == 'E')
+			{
+				printf("Ｅ"); // 특수문자 형태 E
+			}
+			else if (NormalCard[i][j] == 'F')
+			{
+				printf("Ｆ"); // 특수문자 형태 F
+			}
+			else if (NormalCard[i][j] == 'G')
+			{
+				printf("Ｇ"); // 특수문자 형태 G
+			}
+			else if (NormalCard[i][j] == 'H')
+			{
+				printf("Ｈ"); // 특수문자 형태 H
+			}
+			else if (NormalCard[i][j] == 'I')
+			{
+				printf("Ｉ"); // 특수문자 형태 I
+			}
+			else if (NormalCard[i][j] == 'J')
+			{
+				printf("Ｊ"); // 특수문자 형태 J
+			}
+		}
+		printf("\n");
+	}
+		break;
+
+	default:
+		break;
+	}
+	
 }
 
 int main()
@@ -572,10 +1060,14 @@ int main()
 	Diff diff;
 	// LoadFile(".txt");
 	KeyboardMain(&Select);
-	CreateCard(diff);
+	CreateCard();
 	while (1)
 	{
-		Render();
+		Render(diff);
+
+		KeyboardInGame(&Select);
+
+		GotoXY(Select.x, Select.y);
 	}
 	return 0;
 }
