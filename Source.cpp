@@ -19,6 +19,7 @@
 #define HARD_WIDTH 8
 #define HARD_HEIGHT 5
 
+char Title[5][36];
 char EasyCard[EASY_NORMAL_HEIGHT][EASY_WIDTH];		// Easy 4 X 4
 char NormalCard[EASY_NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 6 X 4
 char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 8 X 5
@@ -32,14 +33,6 @@ typedef struct SelectCard
 
 SelectCard Select;
 
-enum Button
-{
-	GameStart,
-	HowToPlay,
-};
-
-Button button;
-
 enum Diff
 {
 	Easy,
@@ -51,8 +44,7 @@ Diff diff;
 
 enum Scene
 {
-	Title,
-	Sdiff,
+	ChoiceDiff,
 	Ingame
 };
 
@@ -71,9 +63,6 @@ enum Color
 };
 
 char key = 0;
-void SelectDiff();
-void KeyboardInGame();
-void How();
 void CreateCard(enum Diff diff);
 void Render(enum Diff diff);
 
@@ -202,69 +191,17 @@ void PrintfScreen(int x, int y, const char* string)
 	);
 }
 
-void SelectScene(int * Point);
+//void SelectScene(int * Point);
+//{
+//	switch (*Point)
+//	{
+//	case 0 : 
+//	}
+//}
+
+void Keyboard(SelectCard * Select)
 {
-	switch (*Point)
-	{
-	case 0 : 
-	}
-}
 
-void KeyboardMain()
-{
-	//FILE* file = fopen(fileName(작성 예정), "r");
-
-	//char buffer[BUFFER_SIZE] = { 0, };
-
-	//fread(buffer, 1, BUFFER_SIZE, file); // 전체 파일을 읽어주는 함수
-
-	//printf("%s", buffer);
-
-	//fclose(file);
-
-	int Point = 0;
-
-	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
-	{
-		key = _getch(); // key 입력을 받아주는 함수
-		system("cls");
-
-		if (key == -32)
-		{
-			key = _getch();
-		}
-
-		switch (key)
-		{
-		case SPACE: switch (button)
-					{
-					case GameStart: system("cls");
-									SelectDiff();
-						break;
-
-					case HowToPlay: system("cls");
-									How();
-						break;
-
-					default:
-						break;
-					}
-			break;
-
-		case UP: if (Select.y - 3 >= 0) { Select.y -= 3; Point = 1; }
-			break;
-
-		case DOWN: if (Select.y + 3 <= 0) { Select.y += 3; Point = 0; }
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void KeyboardInGame()
-{
 	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
 		key = _getch(); // key 입력을 받아주는 함수
@@ -279,13 +216,16 @@ void KeyboardInGame()
 		{
 		case SPACE: switch (diff)
 					{
-					case Easy: 
+					case Easy:		system("cls");
+									CreateCard(Easy);
 						break;
 
-					case Normal:
+					case Normal:	system("cls");
+									CreateCard(Normal);
 						break;
 
-					case Hard:
+					case Hard:		system("cls");
+									CreateCard(Hard);
 						break;
 
 					default:
@@ -293,68 +233,17 @@ void KeyboardInGame()
 					}
 			break;
 
-		case UP: if (Select.y - 1 >= 0) { Select.y--; }
-			   break;
-
-		case DOWN: Select.y++;
+		case UP: if (Select->y - 3 >= 0) { Select->y -= 3;}
 			break;
 
-		case LEFT: if (Select.x / 2 - 1 >= 0) { Select.x -= 2; }
+		case DOWN: if (Select->y + 3 <= 0) { Select->y += 3;}
+			break;
+			
+		case LEFT: if (Select->x + 3 <= 0) { Select->x += 3;}
 				 break;
 
-		case RIGHT: Select.x += 2;
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
-void How() // 게임 방법 설명
-{
-	printf("1. 카드 한 장을 선택 후 다른 카드 한 장을 선택합니다.\n    * 처음 선택한 카드를 다시 선택하면 취소하고 다른 카드를 선택할 수 있습니다.\n2. 두 장의 카드의 모양이 서로 같다면 카드는 사라지고 다르다면 사라지지 않습니다.");
-}
-
-// 난이도 선택
-void SelectDiff()
-{
-	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
-	{
-		key = _getch(); // key 입력을 받아주는 함수
-		system("cls");
-
-		if (key == -32)
-		{
-			key = _getch();
-		}
-
-		switch (key)
-		{
-		case SPACE: switch (diff)
-					{
-					case Easy:	system("cls");
-								CreateCard(Easy);
-						break;
-
-					case Normal:system("cls");
-								CreateCard(Normal);
-						break;
-
-					case Hard:	system("cls");
-								CreateCard(Hard);
-						break;
-
-					default:
-						break;
-					}
-			break;
-
-		case UP: Select.y--;
-			break;
-
-		case DOWN: Select.y++;
-			break;
+		case RIGHT: Select->x += 50;
+				 break;
 
 		default:
 			break;
@@ -871,7 +760,7 @@ void CreateCard(enum Diff diff)
 }
 
 // 카드 이미지 변경 후 출력
-void Render(enum Diff diff)
+void CardRender(enum Diff diff)
 {
 	switch (diff)
 	{
@@ -1071,18 +960,108 @@ void Render(enum Diff diff)
 	
 }
 
+void CreateTitle()
+{
+	strcpy(Title[0], "111111111100011111111110001111111111");
+	strcpy(Title[1], "200000000200020000000020002000000002");
+	strcpy(Title[2], "200EASY00200020NORMAL02000200HARD002");
+	strcpy(Title[3], "200000000200020000000020002000000002");
+	strcpy(Title[4], "111111111100011111111110001111111111");
+}
+
+void TitleRender()
+{
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 36; j++)
+		{
+			if (Title[i][j] == '0')
+			{
+				printf("  ");
+			}
+			else if (Title[i][j] == '1')
+			{
+				printf("―");
+			}
+			else if (Title[i][j] == '2')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'E')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'A')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'S')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'Y')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'N')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'O')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'R')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'M')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'L')
+			{
+				printf("｜");
+			}
+			else if (Title[i][j] == 'H')
+			{
+				printf("ㅍ");
+			}
+			else if (Title[i][j] == 'D')
+			{
+				printf("｜");
+			}
+
+		}
+		printf("\n");
+	}
+}
+
+void SelectDiff(enum Scene scene)
+{
+	switch (scene)
+	{
+	case ChoiceDiff:
+		break;
+
+	case Ingame: printf("");
+		break;
+
+	default:
+		break;
+	}
+}
+
 int main()
 {
-	SelectCard Select = { 0, 3, "□" };
-
-	int Point = 0;
-
-	while (1)
+	SelectCard Select = { 0, 2, "☞" };
+	CreateTitle();
+	TitleRender();
+	/*while(1)
 	{
-		KeyboardMain();
-
+		CardRender(diff);
 		GotoXY(Select.x, Select.y);
 		printf("%s", Select.shape);
-	}
+	}*/
 	return 0;
 }
