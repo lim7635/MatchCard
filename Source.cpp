@@ -19,7 +19,7 @@
 #define HARD_WIDTH 8
 #define HARD_HEIGHT 5
 
-char Title[5][36];
+char Title[5][39];
 char EasyCard[EASY_NORMAL_HEIGHT][EASY_WIDTH];		// Easy 4 X 4
 char NormalCard[EASY_NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 6 X 4
 char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 8 X 5
@@ -31,8 +31,6 @@ typedef struct SelectCard
 	const char* shape;
 }SelectCard;
 
-SelectCard Select;
-
 enum Diff
 {
 	Easy,
@@ -41,12 +39,6 @@ enum Diff
 };
 
 Diff diff;
-
-enum Scene
-{
-	ChoiceDiff,
-	Ingame
-};
 
 // 색상을 결정하는 함수
 enum Color
@@ -62,9 +54,9 @@ enum Color
 	Gray    // 8 = 회색
 };
 
-char key = 0;
 void CreateCard(enum Diff diff);
 void Render(enum Diff diff);
+int Point = 0;
 
 // 버퍼의 크기
 int width = 100;
@@ -108,7 +100,7 @@ void InitScreen()
 		CONSOLE_TEXTMODE_BUFFER,
 		NULL
 	);
-
+	
 	// 버퍼의 사이즈를 설정하는 함수
 	SetConsoleScreenBufferSize(screen[0], size);
 
@@ -191,59 +183,44 @@ void PrintfScreen(int x, int y, const char* string)
 	);
 }
 
-//void SelectScene(int * Point);
-//{
-//	switch (*Point)
-//	{
-//	case 0 : 
-//	}
-//}
-
 void Keyboard(SelectCard * Select)
 {
-
+	char key = 0;
 	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
 		key = _getch(); // key 입력을 받아주는 함수
-		system("cls");
-
 		if (key == -32)
 		{
 			key = _getch();
 		}
-
 		switch (key)
 		{
-		case SPACE: switch (diff)
-					{
-					case Easy:		system("cls");
-									CreateCard(Easy);
-						break;
+		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point = 1; Select->y = 0; Select->shape = "☞"; } //Ingame(Easy); }
+				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "☞";} //Ingame(Normal); }
+				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "☞";} //Ingame(Hard); }
+				  else if (Point == 1 && EasyCard[Select->y][Select->x] != NULL)
+				  else if (Point == 1 && NormalCard[Select->y][Select->x] != NULL)
+				  else if (Point == 1 && HardCard[Select->y][Select->x] != NULL)
 
-					case Normal:	system("cls");
-									CreateCard(Normal);
-						break;
-
-					case Hard:		system("cls");
-									CreateCard(Hard);
-						break;
-
-					default:
-						break;
-					}
 			break;
 
-		case UP: if (Select->y - 3 >= 0) { Select->y -= 3;}
+		case UP: if (Point == 1 && Select->y - 1 >= 0) { Select->y--; }
 			break;
 
-		case DOWN: if (Select->y + 3 <= 0) { Select->y += 3;}
+		case DOWN: if (Point == 1 && diff == Easy && Select->y + 1 < EASY_NORMAL_HEIGHT) { Select->y++; }
+				 else if (Point == 1 && diff == Normal && Select->y + 1 < EASY_NORMAL_HEIGHT) { Select->y++; }
+				 else if (Point == 1 && diff == Hard && Select->y + 1 < HARD_HEIGHT) { Select->y++; }
 			break;
-			
-		case LEFT: if (Select->x + 3 <= 0) { Select->x += 3;}
-				 break;
 
-		case RIGHT: Select->x += 50;
-				 break;
+		case LEFT: if (Point == 0 && Select->x / 2 - 13 >= 0) { Select->x -= 26; }
+				 else if (Point == 1 && Select->x / 2 - 1 >= 0) { Select->x -= 2; }
+			break;
+
+		case RIGHT: if (Point == 0 && Select->x / 2 + 13 <= 38) { Select->x += 26; }
+				  else if (Point == 1 && diff == Easy && Select->x / 2 + 1 < EASY_WIDTH) { Select->x += 2; }
+				  else if (Point == 1 && diff == Normal && Select->x / 2 + 1 < NORMAL_WIDTH) { Select->x += 2; }
+				  else if (Point == 1 && diff == Hard && Select->x / 2 + 1 < HARD_WIDTH) { Select->x += 2; }
+			break;
 
 		default:
 			break;
@@ -760,7 +737,7 @@ void CreateCard(enum Diff diff)
 }
 
 // 카드 이미지 변경 후 출력
-void CardRender(enum Diff diff)
+void CardRender()
 {
 	switch (diff)
 	{
@@ -962,18 +939,18 @@ void CardRender(enum Diff diff)
 
 void CreateTitle()
 {
-	strcpy(Title[0], "111111111100011111111110001111111111");
-	strcpy(Title[1], "200000000200020000000020002000000002");
-	strcpy(Title[2], "200EASY00200020NORMAL02000200HARD002");
-	strcpy(Title[3], "200000000200020000000020002000000002");
-	strcpy(Title[4], "111111111100011111111110001111111111");
+	strcpy(Title[0], "01111111111000111111111100011111111110");
+	strcpy(Title[1], "02000000002000200000000200020000000020");
+	strcpy(Title[2], "0200EASY00200020NORMAL02000200HARD0020");
+	strcpy(Title[3], "02000000002000200000000200020000000020");
+	strcpy(Title[4], "01111111111000111111111100011111111110");
 }
 
 void TitleRender()
 {
 	for (int i = 0; i < 5; i++)
 	{
-		for (int j = 0; j < 36; j++)
+		for (int j = 0; j < 39; j++)
 		{
 			if (Title[i][j] == '0')
 			{
@@ -989,39 +966,39 @@ void TitleRender()
 			}
 			else if (Title[i][j] == 'E')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'A')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'S')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'Y')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'N')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'O')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'R')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'M')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'L')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 			else if (Title[i][j] == 'H')
 			{
@@ -1029,7 +1006,7 @@ void TitleRender()
 			}
 			else if (Title[i][j] == 'D')
 			{
-				printf("｜");
+				printf("ㅍ");
 			}
 
 		}
@@ -1037,14 +1014,17 @@ void TitleRender()
 	}
 }
 
-void SelectDiff(enum Scene scene)
+void Ingame(enum Diff diff)
 {
-	switch (scene)
+	switch (diff)
 	{
-	case ChoiceDiff:
+	case Easy:
 		break;
 
-	case Ingame: printf("");
+	case Normal:
+		break;
+
+	case Hard:
 		break;
 
 	default:
@@ -1054,14 +1034,31 @@ void SelectDiff(enum Scene scene)
 
 int main()
 {
+	InitScreen();
 	SelectCard Select = { 0, 2, "☞" };
 	CreateTitle();
-	TitleRender();
-	/*while(1)
+	while (Point == 0)
 	{
-		CardRender(diff);
+		TitleRender();
+		Keyboard(&Select);
 		GotoXY(Select.x, Select.y);
 		printf("%s", Select.shape);
-	}*/
+
+		Sleep(100);
+		system("cls");
+	}
+
+	while (Point == 1 || Point == 2)
+	{
+		CardRender();
+		Keyboard(&Select);
+		GotoXY(Select.x, Select.y);
+		printf("%s", Select.shape);
+
+		Sleep(100);
+		system("cls");
+	}
+	ReleaseScreen();
+
 	return 0;
 }
