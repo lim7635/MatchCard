@@ -9,7 +9,7 @@
 #define LEFT 75
 #define RIGHT 77
 #define DOWN 80
-#define SPACE 32 // 57
+#define SPACE 32
 
 #define BUFFER_SIZE 10000
 
@@ -23,6 +23,43 @@ char Title[5][39];
 char EasyCard[EASY_NORMAL_HEIGHT][EASY_WIDTH];		// Easy 4 X 4
 char NormalCard[EASY_NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 6 X 4
 char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 8 X 5
+
+// [EASY] 인게임 크기 : 5 x 4 / 실제 크기 : 10 x 8
+//XOXOXOXOXO
+//XXXXXXXXXX
+//XOXOXOXOXO
+//XXXXXXXXXX
+//XOXOXOXOXO
+//XXXXXXXXXX
+//XOXOXOXOXO
+//
+// [NORMAL] 인게임 크기 : 8 x 5 / 실제 크기 : 16 x 10
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//
+// [HARD] 인게임 크기 : 12 x 8 / 실제 크기 : 24 x 16
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXOXOXOXOXO
 
 typedef struct SelectCard
 {
@@ -54,21 +91,23 @@ enum Color
 	Gray    // 8 = 회색
 };
 
+Color color;
+
 void CreateCard(enum Diff diff);
 void Render(enum Diff diff);
 int Point = 0;
 
-// 버퍼의 크기
-int width = 100;
-int height = 60;
+void CursorView() // 커서 활성화 여부
+{
+	CONSOLE_CURSOR_INFO cursorInfo = { 0, };
 
-// 버퍼를 생성합니다.
-HANDLE screen[2];
-// screen[0] front buffer
-// screen[1] back buffer
+	// 커서 굵기 (1 ~ 100)
+	cursorInfo.dwSize = 1;
 
-// HANDLE 인덱스에 접근해서 버퍼를 교체시키는 변수
-int screenIndex = 0;
+	// 커서 Visible TRUE(보임) FALSE(숨김)
+	cursorInfo.bVisible = FALSE;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+}
 
 void GotoXY(int x, int y)
 {
@@ -77,110 +116,6 @@ void GotoXY(int x, int y)
 
 	// 커서 이동 함수
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), position);
-}
-
-// 버퍼를 초기화하는 함수
-void InitScreen()
-{
-	CONSOLE_CURSOR_INFO cursor;
-
-	// 버퍼의 가로 사이즈, 세로 사이즈
-	COORD size = { width, height };
-
-	// left, top, right, bottom
-	SMALL_RECT rect{ 0,0, width - 1, height - 1 };
-
-	// 화면 2개를 생성합니다.
-	// front buffer
-	screen[0] = CreateConsoleScreenBuffer
-	(
-		GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL,
-		CONSOLE_TEXTMODE_BUFFER,
-		NULL
-	);
-	
-	// 버퍼의 사이즈를 설정하는 함수
-	SetConsoleScreenBufferSize(screen[0], size);
-
-	SetConsoleWindowInfo(screen[0], TRUE, &rect);
-
-	// back buffer
-	screen[1] = CreateConsoleScreenBuffer
-	(
-		GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL,
-		CONSOLE_TEXTMODE_BUFFER,
-		NULL
-	);
-
-	// 버퍼의 사이즈를 설정하는 함수
-	SetConsoleScreenBufferSize(screen[1], size);
-
-	SetConsoleWindowInfo(screen[1], TRUE, &rect);
-
-	// 커서의 활성화 여부
-	// false : 거짓 (0)
-	// true  : 참 (1)
-
-	cursor.bVisible = false;
-
-	SetConsoleCursorInfo(screen[0], &cursor);
-	SetConsoleCursorInfo(screen[1], &cursor);
-}
-
-// 버퍼를 교체하는 함수
-void FlipScreen()
-{
-	// 버퍼는 하나만 활성화시킬 수 있습니다.
-	SetConsoleActiveScreenBuffer(screen[screenIndex]);
-
-	screenIndex = !screenIndex;
-}
-
-// 교체된 버퍼를 지워주는 함수
-void ClearScreen()
-{
-	COORD coord = { 0,0 };
-
-	DWORD dw;
-
-	FillConsoleOutputCharacter
-	(
-		screen[screenIndex],
-		' ',
-		width * height,
-		coord,
-		&dw
-	);
-}
-
-// 버퍼를 해제하는 함수
-void ReleaseScreen()
-{
-	CloseHandle(screen[0]);
-	CloseHandle(screen[1]);
-}
-
-// 더블 버퍼링을 사용해서 출력하는 함수
-void PrintfScreen(int x, int y, const char* string)
-{
-	COORD cursorPosition = { x, y };
-
-	DWORD dw;
-
-	SetConsoleCursorPosition(screen[screenIndex], cursorPosition);
-
-	WriteFile
-	(
-		screen[screenIndex],
-		string,
-		strlen(string),
-		&dw,
-		NULL
-	);
 }
 
 void Keyboard(SelectCard * Select)
@@ -195,12 +130,12 @@ void Keyboard(SelectCard * Select)
 		}
 		switch (key)
 		{
-		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point = 1; Select->y = 0; Select->shape = "☞"; } //Ingame(Easy); }
-				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "☞";} //Ingame(Normal); }
-				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "☞";} //Ingame(Hard); }
-				  else if (Point == 1 && EasyCard[Select->y][Select->x] != NULL)
+		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point = 1; Select->y = 0; Select->shape = "■";} //Ingame(Easy); }
+				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "■";} //Ingame(Normal); }
+				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "■";} //Ingame(Hard); }
+				  /*else if (Point == 1 && EasyCard[Select->y][Select->x] != NULL)
 				  else if (Point == 1 && NormalCard[Select->y][Select->x] != NULL)
-				  else if (Point == 1 && HardCard[Select->y][Select->x] != NULL)
+				  else if (Point == 1 && HardCard[Select->y][Select->x] != NULL)*/
 
 			break;
 
@@ -747,7 +682,6 @@ void CardRender()
 					{
 						if (EasyCard[i][j] == '0')
 						{
-
 							printf("★");
 						}
 						else if (EasyCard[i][j] == '1')
@@ -952,6 +886,44 @@ void TitleRender()
 	{
 		for (int j = 0; j < 39; j++)
 		{
+			if (j > 0 && j <= 10)
+			{
+				if (Title[i][j] == '1' || Title[i][j] == '2')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 2);
+				}
+				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+			}
+			else if (j > 13 && j <= 23)
+			{
+				if (Title[i][j] == '1' || Title[i][j] == '2')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 1);
+				}
+				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+			}
+			else if (j > 26 && j <= 36)
+			{
+				if (Title[i][j] == '1' || Title[i][j] == '2')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
+				}
+				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+			}
+			else
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+			}
+			
 			if (Title[i][j] == '0')
 			{
 				printf("  ");
@@ -966,49 +938,48 @@ void TitleRender()
 			}
 			else if (Title[i][j] == 'E')
 			{
-				printf("ㅍ");
+				printf("Ｅ");
 			}
 			else if (Title[i][j] == 'A')
 			{
-				printf("ㅍ");
+				printf("Ａ");
 			}
 			else if (Title[i][j] == 'S')
 			{
-				printf("ㅍ");
+				printf("Ｓ");
 			}
 			else if (Title[i][j] == 'Y')
 			{
-				printf("ㅍ");
+				printf("Ｙ");
 			}
 			else if (Title[i][j] == 'N')
 			{
-				printf("ㅍ");
+				printf("Ｎ");
 			}
 			else if (Title[i][j] == 'O')
 			{
-				printf("ㅍ");
+				printf("Ｏ");
 			}
 			else if (Title[i][j] == 'R')
 			{
-				printf("ㅍ");
+				printf("Ｒ");
 			}
 			else if (Title[i][j] == 'M')
 			{
-				printf("ㅍ");
+				printf("Ｍ");
 			}
 			else if (Title[i][j] == 'L')
 			{
-				printf("ㅍ");
+				printf("Ｌ");
 			}
 			else if (Title[i][j] == 'H')
 			{
-				printf("ㅍ");
+				printf("Ｈ");
 			}
 			else if (Title[i][j] == 'D')
 			{
-				printf("ㅍ");
+				printf("Ｄ");
 			}
-
 		}
 		printf("\n");
 	}
@@ -1034,31 +1005,49 @@ void Ingame(enum Diff diff)
 
 int main()
 {
-	InitScreen();
+	CursorView();
 	SelectCard Select = { 0, 2, "☞" };
 	CreateTitle();
-	while (Point == 0)
+	while (1)
 	{
-		TitleRender();
-		Keyboard(&Select);
-		GotoXY(Select.x, Select.y);
-		printf("%s", Select.shape);
+		while (Point == 0)
+		{
+			TitleRender();
+			Keyboard(&Select);
+			GotoXY(Select.x, Select.y);
+			printf("%s", Select.shape);
 
-		Sleep(100);
-		system("cls");
+			Sleep(100);
+			system("cls");
+		}
+
+		for (int i = 3; i >= 0; i--)
+		{
+			if (i >= 1)
+			{
+				printf("%d", i);
+				Sleep(1000);
+				system("cls");
+			}
+			else
+			{
+				printf("G O");
+				Sleep(500);
+				system("cls");
+			}
+		}
+
+		while (Point == 1 || Point == 2)
+		{
+			CardRender();
+			Keyboard(&Select);
+			GotoXY(Select.x, Select.y);
+			printf("%s", Select.shape);
+
+			Sleep(100);
+			system("cls");
+		}
 	}
-
-	while (Point == 1 || Point == 2)
-	{
-		CardRender();
-		Keyboard(&Select);
-		GotoXY(Select.x, Select.y);
-		printf("%s", Select.shape);
-
-		Sleep(100);
-		system("cls");
-	}
-	ReleaseScreen();
 
 	return 0;
 }
