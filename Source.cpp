@@ -99,6 +99,7 @@ Color color;
 void CreateCard(enum Diff diff);
 void Render(enum Diff diff);
 int Point = 0;
+int Check = 0;
 
 void CursorView() // 커서 활성화 여부
 {
@@ -108,14 +109,7 @@ void CursorView() // 커서 활성화 여부
 	cursorInfo.dwSize = 1;
 
 	// 커서 Visible TRUE(보임) FALSE(숨김)
-	if (Point == 0)
-	{
-		cursorInfo.bVisible = FALSE;
-	}
-	else
-	{
-		cursorInfo.bVisible = TRUE;
-	}
+	cursorInfo.bVisible = FALSE;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 }
 
@@ -140,27 +134,25 @@ void Keyboard(SelectCard * Select)
 		}
 		switch (key)
 		{
-		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point = 1; Select->y = 0; Select->shape = "  ";} //Ingame(Easy); }
-				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "  ";} //Ingame(Normal); }
-				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point = 1; Select->x = 0; Select->y = 0; Select->shape = "  ";} //Ingame(Hard); }
-				  /*else if (Point == 1 && EasyCard[Select->y][Select->x] != NULL)
-				  else if (Point == 1 && NormalCard[Select->y][Select->x] != NULL)
-				  else if (Point == 1 && HardCard[Select->y][Select->x] != NULL)*/
+		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point = 1; Select->y = 0; } //Ingame(Easy); }
+				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point = 1; Select->x = 0; Select->y = 0; } //Ingame(Normal); }
+				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point = 1; Select->x = 0; Select->y = 0; } //Ingame(Hard); }
+				  /*else if (Point == 1 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Select->shape = "ㅁ"; Check++; Ingame(Easy); }
+				  else if (Point == 1 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Ingame(Normal); }
+				  else if (Point == 1 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Ingame(Hard); }*/
 
 			break;
 
-		case UP: if (Point == 1 && Select->y - 1 >= 0) { Select->y--; }
+		case UP: if (Point == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
 			break;
 
-		case DOWN: if (Point == 1 && diff == Easy && Select->y + 1 < EASY_HEIGHT) { Select->y++; }
-				 else if (Point == 1 && diff == Normal && Select->y + 1 < NORMAL_HEIGHT) { Select->y++; }
-				 else if (Point == 1 && diff == Hard && Select->y + 1 < HARD_HEIGHT) { Select->y++; }
+		case DOWN: if (Point == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2 + 1) { Select->y += 2; }
+				 else if (Point == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2 + 1) { Select->y += 2; }
+				 else if (Point == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2 + 1) { Select->y += 2; }
 			break;
 
 		case LEFT: if (Point == 0 && Select->x / 2 - 13 >= 0) { Select->x -= 26; }
-				 else if (Point == 1 && diff == Easy && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
-				 else if (Point == 1 && diff == Normal && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
-				 else if (Point == 1 && diff == Hard && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
+				 else if (Point == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
 			break;
 
 		case RIGHT: if (Point == 0 && Select->x / 2 + 13 <= 38) { Select->x += 26; }
@@ -1204,6 +1196,16 @@ void CardRender()
 				{
 					for (int j = 0; j < EASY_WIDTH; j++)
 					{
+						if (EasyCard[i][j] == 'x')
+						{
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
+							printf("  ");
+						}
+						else
+						{
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+						}
+						
 						if (EasyCard[i][j] == '0')
 						{
 							printf("●");
@@ -1214,39 +1216,35 @@ void CardRender()
 						}
 						else if (EasyCard[i][j] == '2')
 						{
-							printf("■");
+							printf("ㄱ");
 						}
 						else if (EasyCard[i][j] == '3')
 						{
-							printf("ㄱ");
+							printf("ㄴ");
 						}
 						else if (EasyCard[i][j] == '4')
 						{
-							printf("ㄴ");
+							printf("Ａ");
 						}
 						else if (EasyCard[i][j] == '5')
 						{
-							printf("ㄷ");
+							printf("Ｂ");
 						}
 						else if (EasyCard[i][j] == '6')
 						{
-							printf("A");
+							printf("く");
 						}
 						else if (EasyCard[i][j] == '7')
 						{
-							printf("B");
+							printf("う");
 						}
 						else if (EasyCard[i][j] == '8')
 						{
-							printf("C");
+							printf("月");
 						}
 						else if (EasyCard[i][j] == '9')
 						{
-							printf("D");
-						}
-						else if (EasyCard[i][j] == 'x')
-						{
-							printf("  ");
+							printf("火");
 						}
 					}
 					printf("\n");
@@ -1257,6 +1255,16 @@ void CardRender()
 	{
 		for (int j = 0; j < NORMAL_WIDTH; j++)
 		{
+			if (EasyCard[i][j] == 'x')
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
+				printf("  ");
+			}
+			else
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+			}
+			
 			if (NormalCard[i][j] == '0')
 			{
 				printf("●");
@@ -1353,10 +1361,6 @@ void CardRender()
 			{
 				printf("４"); // 특수문자 형태
 			}
-			else if (NormalCard[i][j] == 'x')
-			{
-				printf("  "); // 특수문자 형태
-			}
 		}
 		printf("\n");
 	}
@@ -1366,6 +1370,16 @@ void CardRender()
 	{
 		for (int j = 0; j < HARD_WIDTH; j++)
 		{
+			if (EasyCard[i][j] == 'x')
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
+				printf("  ");
+			}
+			else
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+			}
+			
 			if (HardCard[i][j] == '0')
 			{
 				printf("●");
@@ -1536,7 +1550,7 @@ void CardRender()
 			}
 			else if (HardCard[i][j] == 'g')
 			{
-				printf("ㅃ"); // 특수문자 형태 J
+				printf("π"); // 특수문자 형태 J
 			}
 			else if (HardCard[i][j] == 'h')
 			{
@@ -1557,10 +1571,6 @@ void CardRender()
 			else if (HardCard[i][j] == 'l')
 			{
 				printf("♨"); // 특수문자 형태 J
-			}
-			else if (HardCard[i][j] == 'x')
-			{
-				printf("  "); // 특수문자 형태 J
 			}
 		}
 		printf("\n");
@@ -1592,7 +1602,7 @@ void TitleRender()
 			{
 				if (Title[i][j] == '1' || Title[i][j] == '2')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 2);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
 				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y')
 				{
@@ -1603,7 +1613,7 @@ void TitleRender()
 			{
 				if (Title[i][j] == '1' || Title[i][j] == '2')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 1);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 				}
 				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L')
 				{
@@ -1614,7 +1624,7 @@ void TitleRender()
 			{
 				if (Title[i][j] == '1' || Title[i][j] == '2')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 4);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
 				}
 				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D')
 				{
