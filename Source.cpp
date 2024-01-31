@@ -97,9 +97,13 @@ enum Color
 Color color;
 
 void CreateCard(enum Diff diff);
-void Render(enum Diff diff);
+void Ingame(enum Diff diff);
 int Point = 0;
 int Check = 0;
+int Memory[6] = { 0,0,0,0,0,0 }; // [0] = 첫번째로 선택한 문자의 모양, [1] = 첫번째 y좌표, [2] = 첫번째 x좌표, [3] = 두번째로 선택한 문자의 모양, [4] = 두번째 y좌표, [5] = 두번째 x좌표
+int EasyMatch = 10;
+int NormalMatch = 24;
+int HardMatch = 48;
 
 void CursorView() // 커서 활성화 여부
 {
@@ -134,12 +138,15 @@ void Keyboard(SelectCard * Select)
 		}
 		switch (key)
 		{
-		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point = 1; Select->y = 0; } //Ingame(Easy); }
-				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point = 1; Select->x = 0; Select->y = 0; } //Ingame(Normal); }
-				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point = 1; Select->x = 0; Select->y = 0; } //Ingame(Hard); }
-				  /*else if (Point == 1 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Select->shape = "ㅁ"; Check++; Ingame(Easy); }
-				  else if (Point == 1 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Ingame(Normal); }
-				  else if (Point == 1 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Ingame(Hard); }*/
+		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point++; Select->y = 0; }
+				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point++; Select->x = 0; Select->y = 0; }
+				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point++; Select->x = 0; Select->y = 0; }
+				  else if (Point == 1 && Check == 0 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 0 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 0 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = HardCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 1 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Easy); }
+				  else if (Point == 1 && Check == 1 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Normal); }
+				  else if (Point == 1 && Check == 1 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = HardCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Hard); }
 
 			break;
 
@@ -199,118 +206,118 @@ void CreateCard(enum Diff diff)
 					int Card = rand() % 10;
 					switch (Card)
 					{
-					case 0: if (EasyPost[0] < 2)
-					{
-						EasyPost[0]++;
-						EasyCard[i][j] = '0';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 0: if (EasyPost[0] < 2)
+						{
+							EasyPost[0]++;
+							EasyCard[i][j] = '0';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 1: if (EasyPost[1] < 2)
-					{
-						EasyPost[1]++;
-						EasyCard[i][j] = '1';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 1: if (EasyPost[1] < 2)
+						{
+							EasyPost[1]++;
+							EasyCard[i][j] = '1';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 2: if (EasyPost[2] < 2)
-					{
-						EasyPost[2]++;
-						EasyCard[i][j] = '2';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 2: if (EasyPost[2] < 2)
+						{
+							EasyPost[2]++;
+							EasyCard[i][j] = '2';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 3:	if (EasyPost[3] < 2)
-					{
-						EasyPost[3]++;
-						EasyCard[i][j] = '3';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 3:	if (EasyPost[3] < 2)
+						{
+							EasyPost[3]++;
+							EasyCard[i][j] = '3';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 4:	if (EasyPost[4] < 2)
-					{
-						EasyPost[4]++;
-						EasyCard[i][j] = '4';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 4:	if (EasyPost[4] < 2)
+						{
+							EasyPost[4]++;
+							EasyCard[i][j] = '4';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 5:	if (EasyPost[5] < 2)
-					{
-						EasyPost[5]++;
-						EasyCard[i][j] = '5';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 5:	if (EasyPost[5] < 2)
+						{
+							EasyPost[5]++;
+							EasyCard[i][j] = '5';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 6:	if (EasyPost[6] < 2)
-					{
-						EasyPost[6]++;
-						EasyCard[i][j] = '6';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 6:	if (EasyPost[6] < 2)
+						{
+							EasyPost[6]++;
+							EasyCard[i][j] = '6';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					case 7:	if (EasyPost[7] < 2)
-					{
-						EasyPost[7]++;
-						EasyCard[i][j] = '7';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
-					
-					case 8:	if (EasyPost[8] < 2)
-					{
-						EasyPost[7]++;
-						EasyCard[i][j] = '8';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
-					
-					case 9:	if (EasyPost[9] < 2)
-					{
-						EasyPost[7]++;
-						EasyCard[i][j] = '9';
-					}
-						  else
-					{
-						j--;
-					}
-						  break;
+						case 7:	if (EasyPost[7] < 2)
+						{
+							EasyPost[7]++;
+							EasyCard[i][j] = '7';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
+						
+						case 8:	if (EasyPost[8] < 2)
+						{
+							EasyPost[8]++;
+							EasyCard[i][j] = '8';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
+						
+						case 9:	if (EasyPost[9] < 2)
+						{
+							EasyPost[9]++;
+							EasyCard[i][j] = '9';
+						}
+							  else
+						{
+							j--;
+						}
+							  break;
 
-					default:
-						break;
+						default:
+							break;
 
 					}
 				}
@@ -1255,7 +1262,7 @@ void CardRender()
 	{
 		for (int j = 0; j < NORMAL_WIDTH; j++)
 		{
-			if (EasyCard[i][j] == 'x')
+			if (NormalCard[i][j] == 'x')
 			{
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
 				printf("  ");
@@ -1370,7 +1377,7 @@ void CardRender()
 	{
 		for (int j = 0; j < HARD_WIDTH; j++)
 		{
-			if (EasyCard[i][j] == 'x')
+			if (HardCard[i][j] == 'x')
 			{
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
 				printf("  ");
@@ -1701,14 +1708,32 @@ void Ingame(enum Diff diff)
 {
 	switch (diff)
 	{
-	case Easy:
-		break;
+	case Easy: if (Memory[0] == Memory[3]) {
+		if (Memory[1] != Memory[4] && Memory[2] != Memory[5]) { EasyMatch--; EasyCard[Memory[1]][Memory[2]] = 'x'; EasyCard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+	}
+			 else { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
 
-	case Normal:
-		break;
+			 if (EasyMatch == 0) { Point++; }
+			 break;
 
-	case Hard:
-		break;
+	case Normal: if (Memory[0] == Memory[3]) {
+		if (Memory[1] != Memory[4] && Memory[2] != Memory[5]) { NormalMatch--; NormalCard[Memory[1]][Memory[2]] = 'x'; NormalCard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+	}
+			   else { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+
+			   if (NormalMatch == 0) { Point++; }
+			   break;
+
+	case Hard: if (Memory[0] == Memory[3]) {
+		if (Memory[1] != Memory[4] && Memory[2] != Memory[5]) { HardMatch--; HardCard[Memory[1]][Memory[2]] = 'x'; HardCard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+	}
+			 else { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+
+			 if (HardMatch == 0) { Point++; }
+			 break;
 
 	default:
 		break;
@@ -1749,7 +1774,7 @@ int main()
 			}
 		}
 
-		while (Point == 1 || Point == 2)
+		while (Point == 1)
 		{
 			CardRender();
 			Keyboard(&Select);
@@ -1758,6 +1783,18 @@ int main()
 
 			Sleep(100);
 			system("cls");
+		}
+
+		if (Point == 2)
+		{
+			char Clear[16] = "CONGRATULATIONS";
+			Sleep(200);
+			for (int i = 0; i < 16; i++)
+			{
+				printf("%c ", Clear[i]);
+				Sleep(150);
+			}
+			printf(" !!\n");
 		}
 	}
 
