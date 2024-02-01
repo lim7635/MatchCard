@@ -71,6 +71,14 @@ typedef struct SelectCard
 	const char* shape;
 }SelectCard;
 
+typedef struct CurrentCard
+{
+	int x;
+	int y;
+	const char* text;
+	char show;
+}CurrentCard;
+
 enum Diff
 {
 	Easy,
@@ -100,7 +108,7 @@ void CreateCard(enum Diff diff);
 void Ingame(enum Diff diff);
 int Point = 0;
 int Check = 0;
-int Memory[6] = { 0,0,0,0,0,0 }; // [0] = 첫번째로 선택한 문자의 모양, [1] = 첫번째 y좌표, [2] = 첫번째 x좌표, [3] = 두번째로 선택한 문자의 모양, [4] = 두번째 y좌표, [5] = 두번째 x좌표
+char Memory[7] = "zzzzzz"; // [0] = 첫번째로 선택한 문자의 모양, [1] = 첫번째 y좌표, [2] = 첫번째 x좌표, [3] = 두번째로 선택한 문자의 모양, [4] = 두번째 y좌표, [5] = 두번째 x좌표
 int EasyMatch = 10;
 int NormalMatch = 24;
 int HardMatch = 48;
@@ -126,7 +134,7 @@ void GotoXY(int x, int y)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), position);
 }
 
-void Keyboard(SelectCard * Select)
+void Keyboard(SelectCard* Select, CurrentCard * Current)
 {
 	char key = 0;
 	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
@@ -141,12 +149,15 @@ void Keyboard(SelectCard * Select)
 		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point++; Select->y = 0; }
 				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point++; Select->x = 0; Select->y = 0; }
 				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point++; Select->x = 0; Select->y = 0; }
-				  else if (Point == 1 && Check == 0 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 0 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; Current->show = EasyCard[Select->y][Select->x / 2 + 1]; ShowCard(); }
 				  else if (Point == 1 && Check == 0 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Point == 1 && Check == 0 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = HardCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Point == 1 && Check == 1 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Easy); }
 				  else if (Point == 1 && Check == 1 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Normal); }
 				  else if (Point == 1 && Check == 1 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = HardCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Hard); }
+				  else if (Point == 1 && Check == 0 && EasyCard[Select->y][Select->x / 2 + 1] == 'x') { Current->text = "선택한 카드 : 다시 선택해주세요."; printf("%s", Current->text); }
+				  else if (Point == 1 && Check == 0 && NormalCard[Select->y][Select->x / 2 + 1] == 'x') { Current->text = "선택한 카드 : 다시 선택해주세요."; printf("%s", Current->text); }
+				  else if (Point == 1 && Check == 0 && HardCard[Select->y][Select->x / 2 + 1] == 'x') { Current->text = "선택한 카드 : 다시 선택해주세요."; printf("%s", Current->text); }
 
 			break;
 
@@ -181,7 +192,11 @@ void CreateCard(enum Diff diff)
 	switch (diff)
 	{
 	case Easy: {
-		int EasyPost[10] = { 0,0,0,0,0,0,0,0,0,0 };
+		int EasyPost[10];
+		for (int i = 0; i < 10; i++)
+		{
+			EasyPost[i] = 0;
+		}
 
 		for (int i = 0; i < EASY_HEIGHT; i++)
 		{
@@ -327,7 +342,11 @@ void CreateCard(enum Diff diff)
 		break;
 	
 	case Normal: {
-		int NormalPost[24] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+		int NormalPost[24];
+		for (int i = 0; i < 24; i++)
+		{
+			NormalPost[i] = 0;
+		}
 
 		for (int i = 0; i < NORMAL_HEIGHT; i++)
 		{
@@ -627,6 +646,10 @@ void CreateCard(enum Diff diff)
 
 	case Hard:	{
 	int HardPost[48] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	for (int i = 0; i < 48; i++)
+	{
+		HardPost[i] = 0;
+	}
 
 	for (int i = 0; i < HARD_HEIGHT; i++)
 	{
@@ -1709,8 +1732,8 @@ void Ingame(enum Diff diff)
 	switch (diff)
 	{
 	case Easy: if (Memory[0] == Memory[3]) {
-		if (Memory[1] != Memory[4] && Memory[2] != Memory[5]) { EasyMatch--; EasyCard[Memory[1]][Memory[2]] = 'x'; EasyCard[Memory[4]][Memory[5]] = 'x'; Check--; }
-		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { EasyMatch--; EasyCard[Memory[1]][Memory[2]] = 'x'; EasyCard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 	}
 			 else { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
 
@@ -1718,8 +1741,8 @@ void Ingame(enum Diff diff)
 			 break;
 
 	case Normal: if (Memory[0] == Memory[3]) {
-		if (Memory[1] != Memory[4] && Memory[2] != Memory[5]) { NormalMatch--; NormalCard[Memory[1]][Memory[2]] = 'x'; NormalCard[Memory[4]][Memory[5]] = 'x'; Check--; }
-		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { NormalMatch--; NormalCard[Memory[1]][Memory[2]] = 'x'; NormalCard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 	}
 			   else { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
 
@@ -1727,8 +1750,8 @@ void Ingame(enum Diff diff)
 			   break;
 
 	case Hard: if (Memory[0] == Memory[3]) {
-		if (Memory[1] != Memory[4] && Memory[2] != Memory[5]) { HardMatch--; HardCard[Memory[1]][Memory[2]] = 'x'; HardCard[Memory[4]][Memory[5]] = 'x'; Check--; }
-		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
+		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { HardMatch--; HardCard[Memory[1]][Memory[2]] = 'x'; HardCard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 	}
 			 else { int i = 0; while (i < 6) { Memory[i] = 0; i++; } Check--; }
 
@@ -1740,17 +1763,75 @@ void Ingame(enum Diff diff)
 	}
 }
 
+void ShowCard()
+{
+	CurrentCard current;
+	switch (diff)
+	{
+	case Easy:	if (current.show == '0')
+				{
+					printf("●");
+				}
+				else if (current.show == '1')
+				{
+					printf("▲");
+				}
+				else if (current.show == '2')
+				{
+					printf("ㄱ");
+				}
+				else if (current.show == '3')
+				{
+					printf("ㄴ");
+				}
+				else if (current.show == '4')
+				{
+					printf("Ａ");
+				}
+				else if (current.show == '5')
+				{
+					printf("Ｂ");
+				}
+				else if (current.show == '6')
+				{
+					printf("く");
+				}
+				else if (current.show == '7')
+				{
+					printf("う");
+				}
+				else if (current.show == '8')
+				{
+					printf("月");
+				}
+				else if (current.show == '9')
+				{
+					printf("火");
+				}
+		break;
+
+	case Normal:
+		break;
+
+	case Hard:
+		break;
+
+	default:
+		break;
+}
+
 int main()
 {
 	CursorView();
-	SelectCard Select = { 0, 2, "☞" };
+	SelectCard Select = { 0, 2, "☞"};
+	CurrentCard Current = { 0, 0, "선택한 카드 : ", ' '};
 	CreateTitle();
 	while (1)
 	{
 		while (Point == 0)
 		{
 			TitleRender();
-			Keyboard(&Select);
+			Keyboard(&Select, &Current);
 			GotoXY(Select.x, Select.y);
 			printf("%s", Select.shape);
 
@@ -1777,9 +1858,28 @@ int main()
 		while (Point == 1)
 		{
 			CardRender();
-			Keyboard(&Select);
+			Keyboard(&Select, &Current);
 			GotoXY(Select.x, Select.y);
 			printf("%s", Select.shape);
+
+			if (diff == Easy)
+			{
+				Current.y = 8;
+				GotoXY(Current.x, Current.y);
+				printf("%s%c", Current.text, Current.show);
+			}
+			else if (diff == Normal)
+			{
+				Current.y = 12;
+				GotoXY(Current.x, Current.y);
+				printf("%s%c", Current.text, Current.show);
+			}
+			else if (diff == Hard)
+			{
+				Current.y = 16;
+				GotoXY(Current.x, Current.y);
+				printf("%s%c", Current.text, Current.show);
+			}
 
 			Sleep(100);
 			system("cls");
@@ -1788,15 +1888,16 @@ int main()
 		if (Point == 2)
 		{
 			char Clear[16] = "CONGRATULATIONS";
-			Sleep(200);
+			Sleep(100);
 			for (int i = 0; i < 16; i++)
 			{
 				printf("%c ", Clear[i]);
-				Sleep(150);
+				Sleep(50);
 			}
-			printf(" !!\n");
+			printf("!!\n");
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+			break;
 		}
 	}
-
 	return 0;
 }

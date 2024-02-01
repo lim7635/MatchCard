@@ -1,5 +1,5 @@
 ﻿  Source.cpp
-C:\Users\Administrator\Desktop\MatchCard\MatchCard\Source.cpp(123,21): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\MatchCard\MatchCard\Source.cpp(123,24): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
-C:\Users\Administrator\Desktop\MatchCard\MatchCard\Source.cpp(180,12): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\Administrator\Desktop\MatchCard\MatchCard\Source.cpp(131,21): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\MatchCard\Source.cpp(131,24): warning C4838: 'int'에서 'SHORT'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\Administrator\Desktop\MatchCard\MatchCard\Source.cpp(191,12): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   GameMaker.vcxproj -> C:\Users\Administrator\Desktop\MatchCard\MatchCard\x64\Debug\GameMaker.exe
