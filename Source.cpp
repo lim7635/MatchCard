@@ -14,40 +14,46 @@
 #define BUFFER_SIZE 10000
 
 #define EASY_WIDTH 11
-#define EASY_HEIGHT 7
+#define EASY_HEIGHT 8
 #define NORMAL_WIDTH 17
-#define NORMAL_HEIGHT 11
+#define NORMAL_HEIGHT 12
 #define HARD_WIDTH 25
-#define HARD_HEIGHT 15
+#define HARD_HEIGHT 16
 
 char Title[5][39];
 char EasyCard[EASY_HEIGHT][EASY_WIDTH];		// Easy 5 X 4
 char NormalCard[NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 8 X 6
 char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 12 X 8
 
-// [EASY] 인게임 크기 : 5 x 4 / 실제 크기 : 10 x 7
-//XOXOXOXOXO
-//XXXXXXXXXX
-//XOXOXOXOXO
-//XXXXXXXXXX
-//XOXOXOXOXO
-//XXXXXXXXXX
-//XOXOXOXOXO
+// [EASY] 인게임 크기 : 5 x 4 / 실제 크기 : 10 x 8
 
-// [NORMAL] 인게임 크기 : 8 x 6 / 실제 크기 : 16 x 11
-//XOXOXOXOXOXOXOXO
-//XXXXXXXXXXXXXXXX
-//XOXOXOXOXOXOXOXO
-//XXXXXXXXXXXXXXXX
-//XOXOXOXOXOXOXOXO
-//XXXXXXXXXXXXXXXX
-//XOXOXOXOXOXOXOXO
-//XXXXXXXXXXXXXXXX
-//XOXOXOXOXOXOXOXO
-//XXXXXXXXXXXXXXXX
-//XOXOXOXOXOXOXOXO
+// X = 빈칸
+// O = 카드 위치
 
-// [HARD] 인게임 크기 : 12 x 8 / 실제 크기 : 24 x 15
+//XOXOXOXOXO
+//XXXXXXXXXX
+//XOXOXOXOXO
+//XXXXXXXXXX
+//XOXOXOXOXO
+//XXXXXXXXXX
+//XOXOXOXOXO
+//XXXXXXXXXX
+
+// [NORMAL] 인게임 크기 : 8 x 6 / 실제 크기 : 16 x 12
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+//XOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXX
+
+// [HARD] 인게임 크기 : 12 x 8 / 실제 크기 : 24 x 16
 //XOXOXOXOXOXOXOXOXOXOXOXO
 //XXXXXXXXXXXXXXXXXXXXXXXX
 //XOXOXOXOXOXOXOXOXOXOXOXO
@@ -63,6 +69,7 @@ char HardCard[HARD_HEIGHT][HARD_WIDTH];				// Hard 12 X 8
 //XOXOXOXOXOXOXOXOXOXOXOXO
 //XXXXXXXXXXXXXXXXXXXXXXXX
 //XOXOXOXOXOXOXOXOXOXOXOXO
+//XXXXXXXXXXXXXXXXXXXXXXXX
 
 typedef struct SelectCard
 {
@@ -102,16 +109,18 @@ enum Color
 	Gray    // 8 = 회색
 };
 
-Color color;
-
 void CreateCard(enum Diff diff);
 void Ingame(enum Diff diff);
-int Point = 0;
-int Check = 0;
-char Memory[7] = "zzzzzz"; // [0] = 첫번째로 선택한 문자의 모양, [1] = 첫번째 y좌표, [2] = 첫번째 x좌표, [3] = 두번째로 선택한 문자의 모양, [4] = 두번째 y좌표, [5] = 두번째 x좌표
-int EasyMatch = 10;
-int NormalMatch = 24;
-int HardMatch = 48;
+char ShowCard(enum Diff diff, CurrentCard* Current);
+
+int Point = 0; // Scene 변경을 확인하는 변수
+int Check = 0; // 카드 선택 여부를 확인하는 변수
+char Memory[7] = "zzzzzz"; // [0] = 첫번째로 선택한 문자의 모양 / [1] = 첫번째 y좌표 / [2] = 첫번째 x좌표
+						   // [3] = 두번째로 선택한 문자의 모양 / [4] = 두번째 y좌표 / [5] = 두번째 x좌표
+
+int EasyMatch = 10; // Easy 난이도에서 맞춰야하는 짝의 갯수
+int NormalMatch = 24; // Normal 난이도에서 맞춰야하는 짝의 갯수
+int HardMatch = 48; // Hard 난이도에서 맞춰야하는 짝의 갯수
 
 void CursorView() // 커서 활성화 여부
 {
@@ -149,24 +158,21 @@ void Keyboard(SelectCard* Select, CurrentCard * Current)
 		case SPACE: if (Point == 0 && Select->x == 0) { diff = Easy; CreateCard(Easy); Point++; Select->y = 0; }
 				  else if (Point == 0 && Select->x == 26) { diff = Normal; CreateCard(Normal); Point++; Select->x = 0; Select->y = 0; }
 				  else if (Point == 0 && Select->x == 52) { diff = Hard; CreateCard(Hard); Point++; Select->x = 0; Select->y = 0; }
-				  else if (Point == 1 && Check == 0 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; Current->show = EasyCard[Select->y][Select->x / 2 + 1]; ShowCard(); }
-				  else if (Point == 1 && Check == 0 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Point == 1 && Check == 0 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = HardCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Point == 1 && Check == 1 && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Easy); }
-				  else if (Point == 1 && Check == 1 && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Normal); }
-				  else if (Point == 1 && Check == 1 && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = HardCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Hard); }
-				  else if (Point == 1 && Check == 0 && EasyCard[Select->y][Select->x / 2 + 1] == 'x') { Current->text = "선택한 카드 : 다시 선택해주세요."; printf("%s", Current->text); }
-				  else if (Point == 1 && Check == 0 && NormalCard[Select->y][Select->x / 2 + 1] == 'x') { Current->text = "선택한 카드 : 다시 선택해주세요."; printf("%s", Current->text); }
-				  else if (Point == 1 && Check == 0 && HardCard[Select->y][Select->x / 2 + 1] == 'x') { Current->text = "선택한 카드 : 다시 선택해주세요."; printf("%s", Current->text); }
+				  else if (Point == 1 && Check == 0 && diff == Easy && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 0 && diff == Normal && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 0 && diff == Hard && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = HardCard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Point == 1 && Check == 1 && diff == Easy && EasyCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = EasyCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Easy); }
+				  else if (Point == 1 && Check == 1 && diff == Normal && NormalCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = NormalCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Normal); }
+				  else if (Point == 1 && Check == 1 && diff == Hard && HardCard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = HardCard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Hard); }
 
 			break;
 
 		case UP: if (Point == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
 			break;
 
-		case DOWN: if (Point == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2 + 1) { Select->y += 2; }
-				 else if (Point == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2 + 1) { Select->y += 2; }
-				 else if (Point == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2 + 1) { Select->y += 2; }
+		case DOWN: if (Point == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2) { Select->y += 2; }
+				 else if (Point == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
+				 else if (Point == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
 			break;
 
 		case LEFT: if (Point == 0 && Select->x / 2 - 13 >= 0) { Select->x -= 26; }
@@ -191,7 +197,7 @@ void CreateCard(enum Diff diff)
 	srand(time(NULL));
 	switch (diff)
 	{
-	case Easy: {
+	case Easy: 
 		int EasyPost[10];
 		for (int i = 0; i < 10; i++)
 		{
@@ -338,10 +344,10 @@ void CreateCard(enum Diff diff)
 				}
 			}
 		}
-	}
-		break;
 	
-	case Normal: {
+	break;
+	
+	case Normal: 
 		int NormalPost[24];
 		for (int i = 0; i < 24; i++)
 		{
@@ -641,11 +647,11 @@ void CreateCard(enum Diff diff)
 				}
 			}
 		}
-	}
-		break;
+	
+	break;
 
-	case Hard:	{
-	int HardPost[48] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	case Hard:	
+	int HardPost[48];
 	for (int i = 0; i < 48; i++)
 	{
 		HardPost[i] = 0;
@@ -1209,15 +1215,15 @@ void CreateCard(enum Diff diff)
 				}
 			}
 		}
-	}
-		break;
 
-	default:
-		break;
+	break;
+		
+default:
+	break;
 	}
 }
 
-// 카드 이미지 변경 후 출력
+// 카드의 이미지 변경 후 출력
 void CardRender()
 {
 	switch (diff)
@@ -1613,6 +1619,7 @@ void CardRender()
 	
 }
 
+// 제목 배치
 void CreateTitle()
 {
 	strcpy(Title[0], "01111111111000111111111100011111111110");
@@ -1622,6 +1629,7 @@ void CreateTitle()
 	strcpy(Title[4], "01111111111000111111111100011111111110");
 }
 
+// 제목의 이미지 변경 후 출력
 void TitleRender()
 {
 	for (int i = 0; i < 5; i++)
@@ -1728,7 +1736,7 @@ void TitleRender()
 }
 
 void Ingame(enum Diff diff)
-{
+{ 
 	switch (diff)
 	{
 	case Easy: if (Memory[0] == Memory[3]) {
@@ -1763,68 +1771,357 @@ void Ingame(enum Diff diff)
 	}
 }
 
-void ShowCard()
+char ShowCard(enum Diff diff, CurrentCard * Current)
 {
-	CurrentCard current;
 	switch (diff)
 	{
-	case Easy:	if (current.show == '0')
-				{
-					printf("●");
-				}
-				else if (current.show == '1')
-				{
-					printf("▲");
-				}
-				else if (current.show == '2')
-				{
-					printf("ㄱ");
-				}
-				else if (current.show == '3')
-				{
-					printf("ㄴ");
-				}
-				else if (current.show == '4')
-				{
-					printf("Ａ");
-				}
-				else if (current.show == '5')
-				{
-					printf("Ｂ");
-				}
-				else if (current.show == '6')
-				{
-					printf("く");
-				}
-				else if (current.show == '7')
-				{
-					printf("う");
-				}
-				else if (current.show == '8')
-				{
-					printf("月");
-				}
-				else if (current.show == '9')
-				{
-					printf("火");
-				}
-		break;
+	case Easy: {if (Current->show == '0')
+	{
+		printf("●");
+	}
+			 else if (Current->show == '1')
+	{
+		printf("▲");
+	}
+			 else if (Current->show == '2')
+	{
+		printf("ㄱ");
+	}
+			 else if (Current->show == '3')
+	{
+		printf("ㄴ");
+	}
+			 else if (Current->show == '4')
+	{
+		printf("Ａ");
+	}
+			 else if (Current->show == '5')
+	{
+		printf("Ｂ");
+	}
+			 else if (Current->show == '6')
+	{
+		printf("く");
+	}
+			 else if (Current->show == '7')
+	{
+		printf("う");
+	}
+			 else if (Current->show == '8')
+	{
+		printf("月");
+	}
+			 else if (Current->show == '9')
+	{
+		printf("火");
+	}
+			 break;
+	}
 
-	case Normal:
-		break;
+	case Normal: {if (Current->show == '0')
+	{
+		printf("●");
+	}
+			   else if (Current->show == '1')
+	{
+		printf("▲");
+	}
+			   else if (Current->show == '2')
+	{
+		printf("■");
+	}
+			   else if (Current->show == '3')
+	{
+		printf("★");
+	}
+			   else if (Current->show == '4')
+	{
+		printf("ㄱ");
+	}
+			   else if (Current->show == '5')
+	{
+		printf("ㄴ");
+	}
+			   else if (Current->show == '6')
+	{
+		printf("ㄷ");
+	}
+			   else if (Current->show == '7')
+	{
+		printf("ㄹ");
+	}
+			   else if (Current->show == '8')
+	{
+		printf("Ａ");
+	}
+			   else if (Current->show == '9')
+	{
+		printf("Ｂ");
+	}
+			   else if (Current->show == 'A')
+	{
+		printf("Ｃ"); // 특수문자 형태
+	}
+			   else if (Current->show == 'B')
+	{
+		printf("Ｄ"); // 특수문자 형태
+	}
+			   else if (Current->show == 'C')
+	{
+		printf("く"); // 특수문자 형태
+	}
+			   else if (Current->show == 'D')
+	{
+		printf("う"); // 특수문자 형태
+	}
+			   else if (Current->show == 'E')
+	{
+		printf("つ"); // 특수문자 형태
+	}
+			   else if (Current->show == 'F')
+	{
+		printf("て"); // 특수문자 형태
+	}
+			   else if (Current->show == 'G')
+	{
+		printf("月"); // 특수문자 형태
+	}
+			   else if (Current->show == 'H')
+	{
+		printf("火"); // 특수문자 형태
+	}
+			   else if (Current->show == 'I')
+	{
+		printf("水"); // 특수문자 형태
+	}
+			   else if (Current->show == 'J')
+	{
+		printf("土"); // 특수문자 형태
+	}
+			   else if (Current->show == 'K')
+	{
+		printf("１"); // 특수문자 형태
+	}
+			   else if (Current->show == 'L')
+	{
+		printf("２"); // 특수문자 형태
+	}
+			   else if (Current->show == 'M')
+	{
+		printf("３"); // 특수문자 형태
+	}
+			   else if (Current->show == 'N')
+	{
+		printf("４"); // 특수문자 형태
+	}
+			   break;
+	}
 
-	case Hard:
-		break;
-
+	case Hard: {if (Current->show == '0')
+	{
+		printf("●");
+	}
+			 else if (Current->show == '1')
+	{
+		printf("▲");
+	}
+			 else if (Current->show == '2')
+	{
+		printf("■");
+	}
+			 else if (Current->show == '3')
+	{
+		printf("★");
+	}
+			 else if (Current->show == '4')
+	{
+		printf("♥");
+	}
+			 else if (Current->show == '5')
+	{
+		printf("♣");
+	}
+			 else if (Current->show == '6')
+	{
+		printf("ㄱ");
+	}
+			 else if (Current->show == '7')
+	{
+		printf("ㄴ");
+	}
+			 else if (Current->show == '8')
+	{
+		printf("ㄷ");
+	}
+			 else if (Current->show == '9')
+	{
+		printf("ㄹ");
+	}
+			 else if (Current->show == 'A')
+	{
+		printf("ㅁ"); // 특수문자 형태 A
+	}
+			 else if (Current->show == 'B')
+	{
+		printf("ㅂ"); // 특수문자 형태 B
+	}
+			 else if (Memory[0] == 'C')
+	{
+		printf("Ａ"); // 특수문자 형태 C
+	}
+			 else if (Current->show == 'D')
+	{
+		printf("Ｂ"); // 특수문자 형태 D
+	}
+			 else if (Current->show == 'E')
+	{
+		printf("Ｃ"); // 특수문자 형태 E
+	}
+			 else if (Current->show == 'F')
+	{
+		printf("Ｄ"); // 특수문자 형태 F
+	}
+			 else if (Current->show == 'G')
+	{
+		printf("Ｅ"); // 특수문자 형태 G
+	}
+			 else if (Current->show == 'H')
+	{
+		printf("Ｆ"); // 특수문자 형태 H
+	}
+			 else if (Current->show == 'I')
+	{
+		printf("く"); // 특수문자 형태 I
+	}
+			 else if (Current->show == 'J')
+	{
+		printf("う"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'K')
+	{
+		printf("つ"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'L')
+	{
+		printf("て"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'M')
+	{
+		printf("の"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'N')
+	{
+		printf("ん"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'O')
+	{
+		printf("月"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'P')
+	{
+		printf("火"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'Q')
+	{
+		printf("水"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'R')
+	{
+		printf("土"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'S')
+	{
+		printf("口"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'T')
+	{
+		printf("力"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'U')
+	{
+		printf("１"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'V')
+	{
+		printf("２"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'W')
+	{
+		printf("３"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'X')
+	{
+		printf("４"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'Y')
+	{
+		printf("５"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'Z')
+	{
+		printf("６"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'a')
+	{
+		printf("＃"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'b')
+	{
+		printf("＆"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'c')
+	{
+		printf("＠"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'd')
+	{
+		printf("※"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'e')
+	{
+		printf("☎"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'f')
+	{
+		printf("♬"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'g')
+	{
+		printf("π"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'h')
+	{
+		printf("○"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'i')
+	{
+		printf("◇"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'j')
+	{
+		printf("▽"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'k')
+	{
+		printf("♤"); // 특수문자 형태 J
+	}
+			 else if (Current->show == 'l')
+	{
+		printf("♨"); // 특수문자 형태 J
+	}
+			 break;
+	}
 	default:
 		break;
+	}
+	return 0;
 }
 
 int main()
 {
 	CursorView();
 	SelectCard Select = { 0, 2, "☞"};
-	CurrentCard Current = { 0, 0, "선택한 카드 : ", ' '};
+	CurrentCard Current = { 0, 0, "가리키는 카드 모양 : ", ' '};
 	CreateTitle();
 	while (1)
 	{
@@ -1865,22 +2162,27 @@ int main()
 			if (diff == Easy)
 			{
 				Current.y = 8;
+				Current.show = EasyCard[Select.y][Select.x / 2 + 1];
 				GotoXY(Current.x, Current.y);
-				printf("%s%c", Current.text, Current.show);
+				printf("%s", Current.text);
+				ShowCard(Easy, &Current);
 			}
 			else if (diff == Normal)
 			{
 				Current.y = 12;
+				Current.show = NormalCard[Select.y][Select.x / 2 + 1];
 				GotoXY(Current.x, Current.y);
-				printf("%s%c", Current.text, Current.show);
+				printf("%s", Current.text);
+				ShowCard(Normal, &Current);
 			}
 			else if (diff == Hard)
 			{
 				Current.y = 16;
+				Current.show = HardCard[Select.y][Select.x / 2 + 1];
 				GotoXY(Current.x, Current.y);
-				printf("%s%c", Current.text, Current.show);
+				printf("%s", Current.text);
+				ShowCard(Hard, &Current);
 			}
-
 			Sleep(100);
 			system("cls");
 		}
@@ -1889,13 +2191,13 @@ int main()
 		{
 			char Clear[16] = "CONGRATULATIONS";
 			Sleep(100);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 			for (int i = 0; i < 16; i++)
 			{
 				printf("%c ", Clear[i]);
 				Sleep(50);
 			}
 			printf("!!\n");
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 			break;
 		}
 	}
