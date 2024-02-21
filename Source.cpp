@@ -11,8 +11,6 @@
 #define DOWN 80
 #define SPACE 32
 
-#define BUFFER_SIZE 10000
-
 #define EASY_WIDTH 11
 #define EASY_HEIGHT 8
 #define NORMAL_WIDTH 17
@@ -25,7 +23,8 @@ char CardEasy[EASY_HEIGHT][EASY_WIDTH];			// Easy 5 X 4
 char CardNormal[NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 8 X 6
 char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
 
-// [EASY] 인게임 크기 : 5 x 4 / 실제 크기 : 10 x 8
+#pragma region 난이도별 보드 크기 설정
+// [EASY] 인게임 보드 크기 : 5 x 4 / 실제 보드 크기 : 10 x 8
 
 // X = 빈칸
 // O = 카드 위치
@@ -39,7 +38,7 @@ char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
 //XOXOXOXOXO
 //XXXXXXXXXX
 
-// [NORMAL] 인게임 크기 : 8 x 6 / 실제 크기 : 16 x 12
+// [NORMAL] 인게임 보드 크기 : 8 x 6 / 실제 보드 크기 : 16 x 12
 //XOXOXOXOXOXOXOXO
 //XXXXXXXXXXXXXXXX
 //XOXOXOXOXOXOXOXO
@@ -53,7 +52,7 @@ char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
 //XOXOXOXOXOXOXOXO
 //XXXXXXXXXXXXXXXX
 
-// [HARD] 인게임 크기 : 12 x 8 / 실제 크기 : 24 x 16
+// [HARD] 인게임 보드 크기 : 12 x 8 / 실제 보드 크기 : 24 x 16
 //XOXOXOXOXOXOXOXOXOXOXOXO
 //XXXXXXXXXXXXXXXXXXXXXXXX
 //XOXOXOXOXOXOXOXOXOXOXOXO
@@ -70,6 +69,8 @@ char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
 //XXXXXXXXXXXXXXXXXXXXXXXX
 //XOXOXOXOXOXOXOXOXOXOXOXO
 //XXXXXXXXXXXXXXXXXXXXXXXX
+
+#pragma endregion
 
 typedef struct SelectCard
 {
@@ -114,9 +115,9 @@ void Ingame(enum Diff diff);
 char ShowCard(enum Diff diff, CurrentCard* Current);
 
 int Point = 0; // Scene 변경을 확인하는 변수
-int Check = 0; // 카드 선택 여부를 확인하는 변수
-char Memory[7] = "zzzzzz"; // [0] = 첫번째로 선택한 문자의 모양 / [1] = 첫번째 y좌표 / [2] = 첫번째 x좌표
-						   // [3] = 두번째로 선택한 문자의 모양 / [4] = 두번째 y좌표 / [5] = 두번째 x좌표
+int Check = 0; // 인게임 중 카드 선택 여부를 확인하는 변수
+char Memory[7] = "zzzzzz"; // [0] = 첫번째로 선택한 카드의 모양 / [1] = 첫번째 카드의 y좌표 / [2] = 첫번째 카드의 x좌표
+						   // [3] = 두번째로 선택한 카드의 모양 / [4] = 두번째 카드의 y좌표 / [5] = 두번째 카드의 x좌표
 
 int MatchEasy = 10; // Easy 난이도에서 맞춰야하는 짝의 갯수를 확인하는 변수
 int MatchNormal = 24; // Normal 난이도에서 맞춰야하는 짝의 갯수를 확인하는 변수
@@ -2150,14 +2151,12 @@ char ShowCard(enum Diff diff, CurrentCard * Current)
 	return 0;
 }
 
-
 int main()
 {
 	CursorView();
 	SelectCard Select = { 0, 2, "☞"};
 	CurrentCard Current = { 0, 0, "선택한 카드 : ", ' '};
 	CreateTitle();
-	char CardPrint = Current.show;
 	while (1)
 	{
 		while (Point == 0)
@@ -2188,7 +2187,7 @@ int main()
 				}
 				else if(Check == 1)
 				{
-					Current.show = CardEasy[Select.y][Select.x / 2 + 1];
+					Current.show = Memory[0];
 				}
 				GotoXY(Current.x, Current.y);
 				printf("%s", Current.text);
@@ -2203,7 +2202,7 @@ int main()
 				}
 				else if (Check == 1)
 				{
-					Current.show = CardNormal[Select.y][Select.x / 2 + 1];
+					Current.show = Memory[0];
 				}
 				GotoXY(Current.x, Current.y);
 				printf("%s", Current.text);
@@ -2218,7 +2217,7 @@ int main()
 				}
 				else if (Check == 1)
 				{
-					Current.show = CardHard[Select.y][Select.x / 2 + 1];
+					Current.show = Memory[0];
 				}
 				GotoXY(Current.x, Current.y);
 				printf("%s", Current.text);
