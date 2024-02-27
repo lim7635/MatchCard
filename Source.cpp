@@ -18,14 +18,15 @@
 #define HARD_WIDTH 24	 // 난이도(Hard)의 가로 길이
 #define HARD_HEIGHT 16	 // 난이도(Hard)의 세로 길이
 
-char Title[5][39];								// 2차원 문자열
+char Title[17][13];								// 2차원 문자열(난이도 선택)
+char Replay[11][13];							// 2차원 문자열(다시하기)
 char CardEasy[EASY_HEIGHT][EASY_WIDTH];			// Easy 5 X 4
 char CardNormal[NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 8 X 6
 char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
 
 int Scene = 0; // Scene 변경을 확인하는 변수
 int Check = 0; // 인게임 중 카드 선택 여부를 확인하는 변수
-char Memory[7] = "zzzzzz"; // [0] = 첫번째로 선택한 카드의 모양 / [1] = 첫번째 카드의 y좌표 / [2] = 첫번째 카드의 x좌표
+char Memory[7]; // [0] = 첫번째로 선택한 카드의 모양 / [1] = 첫번째 카드의 y좌표 / [2] = 첫번째 카드의 x좌표
 						   // [3] = 두번째로 선택한 카드의 모양 / [4] = 두번째 카드의 y좌표 / [5] = 두번째 카드의 x좌표
 
 int MatchEasy = 10;	  // Easy 난이도에서 맞춰야하는 짝의 개수
@@ -137,56 +138,64 @@ void GotoXY(int x, int y)
 // 제목 배치 함수
 void CreateTitle()
 {
-	strcpy(Title[0], "01111111111000111111111100011111111110");
-	strcpy(Title[1], "01000000001000100000000100010000000010");
-	strcpy(Title[2], "0100EASY00100010NORMAL01000100HARD0010");
-	strcpy(Title[3], "01000000001000100000000100010000000010");
-	strcpy(Title[4], "01111111111000111111111100011111111110");
+	strcpy(Title[0], "011111111110");
+	strcpy(Title[1], "010000000010");
+	strcpy(Title[2], "0100EASY0010");
+	strcpy(Title[3], "010000000010");
+	strcpy(Title[4], "011111111110");
+	strcpy(Title[5], "000000000000");
+	strcpy(Title[6], "011111111110");
+	strcpy(Title[7], "010000000010");
+	strcpy(Title[8], "010NORMAL010");
+	strcpy(Title[9], "010000000010");
+	strcpy(Title[10], "011111111110");
+	strcpy(Title[11], "000000000000");
+	strcpy(Title[12], "011111111110");
+	strcpy(Title[13], "010000000010");
+	strcpy(Title[14], "0100HARD0010");
+	strcpy(Title[15], "010000000010");
+	strcpy(Title[16], "011111111110");
 }
 
 // 제목 색깔 & 이미지 변경 후 출력 함수
 void TitleRender()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 17; i++)
 	{
-		for (int j = 0; j < 39; j++)
+		for (int j = 0; j < 12; j++)
 		{
-			if (j > 0 && j <= 10)
+			if (i >= 0 && i <= 4)
 			{
 				if (Title[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
-				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y')
+				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y' || Title[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
-			else if (j > 13 && j <= 23)
+			else if (i >= 6 && i <= 10)
 			{
 				if (Title[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 				}
-				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L')
+				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L' || Title[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
-			else if (j > 26 && j <= 36)
+			else if (i >= 12 && i <= 16)
 			{
 				if (Title[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
 				}
-				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D')
+				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D' || Title[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
-			}
-			else
-			{
-				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 			}
 			
 			if (Title[i][j] == '0')
@@ -1462,7 +1471,121 @@ void Cleargame()
 		printf("%c ", Clear[i]);
 		Sleep(30);
 	}
-	printf("!!\n");
+	printf("!!\n\n");
+}
+
+// 게임을 다시할 지 선택하는 함수
+void CreateReplay()
+{
+	strcpy(Replay[0], "011111111110");
+	strcpy(Replay[1], "010000000010");
+	strcpy(Replay[2], "010REPLAY010");
+	strcpy(Replay[3], "010000000010");
+	strcpy(Replay[4], "011111111110");
+	strcpy(Replay[5], "000000000000");
+	strcpy(Replay[6], "011111111110");
+	strcpy(Replay[7], "010000000010");
+	strcpy(Replay[8], "0100EXIT0010");
+	strcpy(Replay[9], "010000000010");
+	strcpy(Replay[10], "011111111110");
+}
+
+// 게임을 다시할 지 선택하는 함수
+void ReplayRender()
+{
+	for (int i = 0; i < 11; i++)
+	{
+		for (int j = 0; j < 12; j++)
+		{
+			if (i >= 0 && i <= 4)
+			{
+				if (Title[i][j] == '1')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				}
+				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y' || Title[i][j] == '0')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+			}
+			else if (i >= 6 && i <= 10)
+			{
+				if (Title[i][j] == '1')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
+				}
+				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L' || Title[i][j] == '0')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+			}
+			else if (i >= 12 && i <= 16)
+			{
+				if (Title[i][j] == '1')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				}
+				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D' || Title[i][j] == '0')
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+				}
+			}
+
+			if (Title[i][j] == '0')
+			{
+				printf("  ");
+			}
+			else if (Title[i][j] == '1')
+			{
+				printf("■");
+			}
+			else if (Title[i][j] == 'E')
+			{
+				printf("Ｅ");
+			}
+			else if (Title[i][j] == 'A')
+			{
+				printf("Ａ");
+			}
+			else if (Title[i][j] == 'S')
+			{
+				printf("Ｓ");
+			}
+			else if (Title[i][j] == 'Y')
+			{
+				printf("Ｙ");
+			}
+			else if (Title[i][j] == 'N')
+			{
+				printf("Ｎ");
+			}
+			else if (Title[i][j] == 'O')
+			{
+				printf("Ｏ");
+			}
+			else if (Title[i][j] == 'R')
+			{
+				printf("Ｒ");
+			}
+			else if (Title[i][j] == 'M')
+			{
+				printf("Ｍ");
+			}
+			else if (Title[i][j] == 'L')
+			{
+				printf("Ｌ");
+			}
+			else if (Title[i][j] == 'H')
+			{
+				printf("Ｈ");
+			}
+			else if (Title[i][j] == 'D')
+			{
+				printf("Ｄ");
+			}
+		}
+		printf("\n");
+	}
 }
 
 // 키보드 함수
@@ -1478,9 +1601,9 @@ void Keyboard(SelectCard * Select)
 		}
 		switch (key)
 		{
-		case SPACE:	   if (Scene == 0 && Select->x == 0)  { diff = Easy; Scene++; Select->y = 0; CreateCard(); }
-				  else if (Scene == 0 && Select->x == 26) { diff = Normal; Scene++; Select->x = 0; Select->y = 0; CreateCard(); }
-				  else if (Scene == 0 && Select->x == 52) { diff = Hard; Scene++; Select->x = 0; Select->y = 0; CreateCard(); }
+		case SPACE:	   if (Scene == 0 && Select->y == 2)  { diff = Easy; Scene++; Select->y = 0; CreateCard(); }
+				  else if (Scene == 0 && Select->y == 8) { diff = Normal; Scene++; Select->y = 0; CreateCard(); }
+				  else if (Scene == 0 && Select->y == 14) { diff = Hard; Scene++; Select->y = 0; CreateCard(); }
 				  else if (Scene == 1 && Check == 0 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 0 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 0 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
@@ -1489,22 +1612,22 @@ void Keyboard(SelectCard * Select)
 				  else if (Scene == 1 && Check == 1 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
 			break;
 
-		case LEFT: if (Scene == 0 && Select->x / 2 - 13 >= 0) { Select->x -= 26; }
-				 else if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
+		case LEFT:	   if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
 			break;
 
-		case RIGHT: if (Scene == 0 && Select->x / 2 + 13 <= 38) { Select->x += 26; }
-				  else if (Scene == 1 && diff == Easy && Select->x / 4 + 1 < EASY_WIDTH / 2) { Select->x += 4; }
+		case RIGHT:	   if (Scene == 1 && diff == Easy && Select->x / 4 + 1 < EASY_WIDTH / 2) { Select->x += 4; }
 				  else if (Scene == 1 && diff == Normal && Select->x / 4 + 1 < NORMAL_WIDTH / 2) { Select->x += 4; }
 				  else if (Scene == 1 && diff == Hard && Select->x / 4 + 1 < HARD_WIDTH / 2) { Select->x += 4; }
 			break;
 
-		case UP: if (Scene == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
+		case UP:	   if (Scene == 0 && Select->y - 6 >= 0) { Select->y -= 6; }
+				  else if (Scene == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
 			break;
 
-		case DOWN: if (Scene == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2) { Select->y += 2; }
-				 else if (Scene == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
-				 else if (Scene == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
+		case DOWN:	   if (Scene == 0 && Select->y + 6 <= 14) { Select->y += 6; }
+				  else if (Scene == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2) { Select->y += 2; }
+				  else if (Scene == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
+				  else if (Scene == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
 			break;
 
 		default:
@@ -1512,7 +1635,6 @@ void Keyboard(SelectCard * Select)
 		}
 	}
 }
-
 
 int main()
 {
