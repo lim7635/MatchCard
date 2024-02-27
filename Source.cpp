@@ -11,11 +11,11 @@
 #define DOWN 80  // 방향키(↓)
 #define SPACE 32 // 스페이스 바
 
-#define EASY_WIDTH 11	 // 난이도(Easy)의 가로 길이
+#define EASY_WIDTH 10	 // 난이도(Easy)의 가로 길이
 #define EASY_HEIGHT 8	 // 난이도(Easy)의 세로 길이
-#define NORMAL_WIDTH 17  // 난이도(Normal)의 가로 길이
+#define NORMAL_WIDTH 16  // 난이도(Normal)의 가로 길이
 #define NORMAL_HEIGHT 12 // 난이도(Normal)의 세로 길이
-#define HARD_WIDTH 25	 // 난이도(Hard)의 가로 길이
+#define HARD_WIDTH 24	 // 난이도(Hard)의 가로 길이
 #define HARD_HEIGHT 16	 // 난이도(Hard)의 세로 길이
 
 char Title[5][39];								// 2차원 문자열
@@ -34,20 +34,15 @@ int MatchHard = 48;	  // Hard 난이도에서 맞춰야하는 짝의 개수
 
 #pragma region 난이도별 보드 크기 설정
 
-/* [EASY] 인게임 보드 크기 : 5 x 4 / 실제 보드 크기 : 10 x 8
-
-	X = 빈칸
-	O = 카드 위치
+/*
+	[EASY]
 
 	OOOOO
 	OOOOO
 	OOOOO
 	OOOOO
 	OOOOO
-	
-	[EASY] 인게임 보드 크기 : 5 x 4 / 실제 보드 크기 : 10 x 8
 
-	XOXOXOXOXO
 	XXXXXXXXXX
 	XOXOXOXOXO
 	XXXXXXXXXX
@@ -118,10 +113,6 @@ enum Diff
 };
 Diff diff;
 
-void CreateCard(enum Diff diff);
-void Ingame(enum Diff diff);
-char ShowCard(enum Diff diff, CurrentCard* Current);
-
 // 커서 활성화 여부 함수
 void CursorView()
 {
@@ -153,7 +144,7 @@ void CreateTitle()
 	strcpy(Title[4], "01111111111000111111111100011111111110");
 }
 
-// 제목 이미지 & 색깔 변경 후 출력 함수
+// 제목 색깔 & 이미지 변경 후 출력 함수
 void TitleRender()
 {
 	for (int i = 0; i < 5; i++)
@@ -256,22 +247,8 @@ void TitleRender()
 }
 
 // 카드 배치 함수
-void CreateCard(enum Diff diff)
+void CreateCard()
 {
-	/* X = 빈칸
-	O = 카드 위치
-
-	[EASY] 인게임 보드 크기 : 5 x 4 / 실제 보드 크기 : 10 x 8
-
-	XOXOXOXOXO
-	XXXXXXXXXX
-	XOXOXOXOXO
-	XXXXXXXXXX
-	XOXOXOXOXO
-	XXXXXXXXXX
-	XOXOXOXOXO
-	XXXXXXXXXX */
-
 	srand(time(NULL));
 	switch (diff)
 	{
@@ -674,7 +651,7 @@ void CreateCard(enum Diff diff)
 	}
 }
 
-// 카드의 이미지 변경 후 출력하는 함수 (빈 칸은 노란색, 카드가 있는 칸은 흰색으로 출력)
+// 문자에 따라 카드의 이미지를 출력하는 함수 (빈 칸은 노란색, 카드가 있는 칸은 흰색으로 출력)
 void CardRender()
 {
 	switch (diff)
@@ -1090,56 +1067,8 @@ void Countdown()
 	}
 }
 
-// 키보드 함수
-void Keyboard(SelectCard * Select)
-{
-	char key = 0;
-	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
-	{
-		key = _getch(); // key 입력을 받아주는 함수
-		if (key == -32)
-		{
-			key = _getch();
-		}
-		switch (key)
-		{
-		case SPACE:	   if (Scene == 0 && Select->x == 0)  { diff = Easy; Scene++; Select->y = 0; CreateCard(Easy); }
-				  else if (Scene == 0 && Select->x == 26) { diff = Normal; Scene++; Select->x = 0; Select->y = 0; CreateCard(Normal); }
-				  else if (Scene == 0 && Select->x == 52) { diff = Hard; Scene++; Select->x = 0; Select->y = 0; CreateCard(Hard); }
-				  else if (Scene == 1 && Check == 0 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 0 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 0 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 1 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Easy); }
-				  else if (Scene == 1 && Check == 1 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Normal); }
-				  else if (Scene == 1 && Check == 1 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(Hard); }
-			break;
-
-		case LEFT: if (Scene == 0 && Select->x / 2 - 13 >= 0) { Select->x -= 26; }
-				 else if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
-			break;
-
-		case RIGHT: if (Scene == 0 && Select->x / 2 + 13 <= 38) { Select->x += 26; }
-				  else if (Scene == 1 && diff == Easy && Select->x / 4 + 1 < EASY_WIDTH / 2) { Select->x += 4; }
-				  else if (Scene == 1 && diff == Normal && Select->x / 4 + 1 < NORMAL_WIDTH / 2) { Select->x += 4; }
-				  else if (Scene == 1 && diff == Hard && Select->x / 4 + 1 < HARD_WIDTH / 2) { Select->x += 4; }
-			break;
-
-		case UP: if (Scene == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
-			break;
-
-		case DOWN: if (Scene == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2) { Select->y += 2; }
-				 else if (Scene == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
-				 else if (Scene == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
 // 카드의 짝이 맞는지 확인하는 함수
-void Ingame(enum Diff diff)
+void Ingame()
 { 
 	switch (diff)
 	{
@@ -1175,8 +1104,8 @@ void Ingame(enum Diff diff)
 	}
 }
 
-// 선택한 카드 이미지를 변경 후 출력하는 함수
-char ShowCard(enum Diff diff, CurrentCard * Current)
+// 선택한 카드 이미지를 출력하는 함수
+char ShowCard(CurrentCard * Current)
 {
 	switch (diff)
 	{
@@ -1536,6 +1465,55 @@ void Cleargame()
 	printf("!!\n");
 }
 
+// 키보드 함수
+void Keyboard(SelectCard * Select)
+{
+	char key = 0;
+	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
+	{
+		key = _getch(); // key 입력을 받아주는 함수
+		if (key == -32)
+		{
+			key = _getch();
+		}
+		switch (key)
+		{
+		case SPACE:	   if (Scene == 0 && Select->x == 0)  { diff = Easy; Scene++; Select->y = 0; CreateCard(); }
+				  else if (Scene == 0 && Select->x == 26) { diff = Normal; Scene++; Select->x = 0; Select->y = 0; CreateCard(); }
+				  else if (Scene == 0 && Select->x == 52) { diff = Hard; Scene++; Select->x = 0; Select->y = 0; CreateCard(); }
+				  else if (Scene == 1 && Check == 0 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Scene == 1 && Check == 0 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Scene == 1 && Check == 0 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Scene == 1 && Check == 1 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+				  else if (Scene == 1 && Check == 1 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+				  else if (Scene == 1 && Check == 1 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+			break;
+
+		case LEFT: if (Scene == 0 && Select->x / 2 - 13 >= 0) { Select->x -= 26; }
+				 else if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
+			break;
+
+		case RIGHT: if (Scene == 0 && Select->x / 2 + 13 <= 38) { Select->x += 26; }
+				  else if (Scene == 1 && diff == Easy && Select->x / 4 + 1 < EASY_WIDTH / 2) { Select->x += 4; }
+				  else if (Scene == 1 && diff == Normal && Select->x / 4 + 1 < NORMAL_WIDTH / 2) { Select->x += 4; }
+				  else if (Scene == 1 && diff == Hard && Select->x / 4 + 1 < HARD_WIDTH / 2) { Select->x += 4; }
+			break;
+
+		case UP: if (Scene == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
+			break;
+
+		case DOWN: if (Scene == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2) { Select->y += 2; }
+				 else if (Scene == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
+				 else if (Scene == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
+
 int main()
 {
 	CursorView();
@@ -1576,7 +1554,7 @@ int main()
 				}
 				GotoXY(Current.x, Current.y);
 				printf("%s", Current.text);
-				ShowCard(Easy, &Current);
+				ShowCard(&Current);
 			}
 			else if (diff == Normal)
 			{
@@ -1591,7 +1569,7 @@ int main()
 				}
 				GotoXY(Current.x, Current.y);
 				printf("%s", Current.text);
-				ShowCard(Normal, &Current);
+				ShowCard(&Current);
 			}
 			else if (diff == Hard)
 			{
@@ -1606,7 +1584,7 @@ int main()
 				}
 				GotoXY(Current.x, Current.y);
 				printf("%s", Current.text);
-				ShowCard(Hard, &Current);
+				ShowCard(&Current);
 			}
 			Sleep(100);
 			system("cls");
