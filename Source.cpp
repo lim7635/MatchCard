@@ -18,7 +18,7 @@
 #define HARD_WIDTH 24	 // 난이도(Hard)의 가로 길이
 #define HARD_HEIGHT 16	 // 난이도(Hard)의 세로 길이
 
-char Title[17][13];								// 2차원 문자열(난이도 선택)
+char Main[17][13];								// 2차원 문자열(난이도 선택)
 char Replay[11][13];							// 2차원 문자열(다시하기)
 char CardEasy[EASY_HEIGHT][EASY_WIDTH];			// Easy 5 X 4
 char CardNormal[NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 8 X 6
@@ -27,11 +27,11 @@ char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
 int Scene = 0; // Scene 변경을 확인하는 변수
 int Check = 0; // 인게임 중 카드 선택 여부를 확인하는 변수
 char Memory[7]; // [0] = 첫번째로 선택한 카드의 모양 / [1] = 첫번째 카드의 y좌표 / [2] = 첫번째 카드의 x좌표
-						   // [3] = 두번째로 선택한 카드의 모양 / [4] = 두번째 카드의 y좌표 / [5] = 두번째 카드의 x좌표
+				// [3] = 두번째로 선택한 카드의 모양 / [4] = 두번째 카드의 y좌표 / [5] = 두번째 카드의 x좌표
 
-int MatchEasy = 10;	  // Easy 난이도에서 맞춰야하는 짝의 개수
-int MatchNormal = 24; // Normal 난이도에서 맞춰야하는 짝의 개수
-int MatchHard = 48;	  // Hard 난이도에서 맞춰야하는 짝의 개수
+int MatchEasy;	  // Easy 난이도에서 맞춰야하는 짝의 개수 (10개)
+int MatchNormal; // Normal 난이도에서 맞춰야하는 짝의 개수 (24개)
+int MatchHard;	  // Hard 난이도에서 맞춰야하는 짝의 개수 (48개)
 
 #pragma region 난이도별 보드 크기 설정
 
@@ -135,30 +135,30 @@ void GotoXY(int x, int y)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), position);
 }
 
-// 제목 배치 함수
-void CreateTitle()
+// 메인 화면 배치 함수
+void CreateMain()
 {
-	strcpy(Title[0], "011111111110");
-	strcpy(Title[1], "010000000010");
-	strcpy(Title[2], "0100EASY0010");
-	strcpy(Title[3], "010000000010");
-	strcpy(Title[4], "011111111110");
-	strcpy(Title[5], "000000000000");
-	strcpy(Title[6], "011111111110");
-	strcpy(Title[7], "010000000010");
-	strcpy(Title[8], "010NORMAL010");
-	strcpy(Title[9], "010000000010");
-	strcpy(Title[10], "011111111110");
-	strcpy(Title[11], "000000000000");
-	strcpy(Title[12], "011111111110");
-	strcpy(Title[13], "010000000010");
-	strcpy(Title[14], "0100HARD0010");
-	strcpy(Title[15], "010000000010");
-	strcpy(Title[16], "011111111110");
+	strcpy(Main[0], "011111111110");
+	strcpy(Main[1], "010000000010");
+	strcpy(Main[2], "0100EASY0010");
+	strcpy(Main[3], "010000000010");
+	strcpy(Main[4], "011111111110");
+	strcpy(Main[5], "000000000000");
+	strcpy(Main[6], "011111111110");
+	strcpy(Main[7], "010000000010");
+	strcpy(Main[8], "010NORMAL010");
+	strcpy(Main[9], "010000000010");
+	strcpy(Main[10], "011111111110");
+	strcpy(Main[11], "000000000000");
+	strcpy(Main[12], "011111111110");
+	strcpy(Main[13], "010000000010");
+	strcpy(Main[14], "0100HARD0010");
+	strcpy(Main[15], "010000000010");
+	strcpy(Main[16], "011111111110");
 }
 
-// 제목 색깔 & 이미지 변경 후 출력 함수
-void TitleRender()
+// 메인 화면 색깔 & 이미지 변경 후 출력 함수
+void MainRender()
 {
 	for (int i = 0; i < 17; i++)
 	{
@@ -166,87 +166,87 @@ void TitleRender()
 		{
 			if (i >= 0 && i <= 4)
 			{
-				if (Title[i][j] == '1')
+				if (Main[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
-				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y' || Title[i][j] == '0')
+				else if (Main[i][j] == 'E' || Main[i][j] == 'A' || Main[i][j] == 'S' || Main[i][j] == 'Y' || Main[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
 			else if (i >= 6 && i <= 10)
 			{
-				if (Title[i][j] == '1')
+				if (Main[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 				}
-				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L' || Title[i][j] == '0')
+				else if (Main[i][j] == 'N' || Main[i][j] == 'O' || Main[i][j] == 'R' || Main[i][j] == 'M' || Main[i][j] == 'A' || Main[i][j] == 'L' || Main[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
 			else if (i >= 12 && i <= 16)
 			{
-				if (Title[i][j] == '1')
+				if (Main[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
 				}
-				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D' || Title[i][j] == '0')
+				else if (Main[i][j] == 'H' || Main[i][j] == 'A' || Main[i][j] == 'R' || Main[i][j] == 'D' || Main[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
 			
-			if (Title[i][j] == '0')
+			if (Main[i][j] == '0')
 			{
 				printf("  ");
 			}
-			else if (Title[i][j] == '1')
+			else if (Main[i][j] == '1')
 			{
 				printf("■");
 			}
-			else if (Title[i][j] == 'E')
+			else if (Main[i][j] == 'E')
 			{
 				printf("Ｅ");
 			}
-			else if (Title[i][j] == 'A')
+			else if (Main[i][j] == 'A')
 			{
 				printf("Ａ");
 			}
-			else if (Title[i][j] == 'S')
+			else if (Main[i][j] == 'S')
 			{
 				printf("Ｓ");
 			}
-			else if (Title[i][j] == 'Y')
+			else if (Main[i][j] == 'Y')
 			{
 				printf("Ｙ");
 			}
-			else if (Title[i][j] == 'N')
+			else if (Main[i][j] == 'N')
 			{
 				printf("Ｎ");
 			}
-			else if (Title[i][j] == 'O')
+			else if (Main[i][j] == 'O')
 			{
 				printf("Ｏ");
 			}
-			else if (Title[i][j] == 'R')
+			else if (Main[i][j] == 'R')
 			{
 				printf("Ｒ");
 			}
-			else if (Title[i][j] == 'M')
+			else if (Main[i][j] == 'M')
 			{
 				printf("Ｍ");
 			}
-			else if (Title[i][j] == 'L')
+			else if (Main[i][j] == 'L')
 			{
 				printf("Ｌ");
 			}
-			else if (Title[i][j] == 'H')
+			else if (Main[i][j] == 'H')
 			{
 				printf("Ｈ");
 			}
-			else if (Title[i][j] == 'D')
+			else if (Main[i][j] == 'D')
 			{
 				printf("Ｄ");
 			}
@@ -1063,13 +1063,26 @@ void Countdown()
 	{
 		if (i >= 1)
 		{
-			printf("%d", i);
+			switch (i)
+			{
+			case 3: printf("３");
+				break;
+
+			case 2: printf("２");
+				break;
+
+			case 1: printf("１");
+				break;
+				
+			default:
+				break;
+			}
 			Sleep(1000);
 			system("cls");
 		}
 		else
 		{
-			printf("G O !!");
+			printf("ＧＯ!!");
 			Sleep(500);
 			system("cls");
 		}
@@ -1460,21 +1473,7 @@ char ShowCard(CurrentCard * Current)
 	return 0;
 }
 
-// 게임 클리어 후 나오는 "CONGRATULATIONS!!" 문구 출력 함수
-void Cleargame()
-{
-	char Clear[16] = "CONGRATULATIONS";
-	Sleep(100);
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
-	for (int i = 0; i < 16; i++)
-	{
-		printf("%c ", Clear[i]);
-		Sleep(30);
-	}
-	printf("!!\n\n");
-}
-
-// 게임을 다시할 지 선택하는 함수
+// 다시 하기 화면 배치 함수
 void CreateReplay()
 {
 	strcpy(Replay[0], "011111111110");
@@ -1490,98 +1489,80 @@ void CreateReplay()
 	strcpy(Replay[10], "011111111110");
 }
 
-// 게임을 다시할 지 선택하는 함수
+// 다시 하기 화면 색깔 & 이미지 변경 후 출력 함수
 void ReplayRender()
 {
+	printf("ＧＡＭＥ ＣＬＥＡＲ!!\n\n");
 	for (int i = 0; i < 11; i++)
 	{
 		for (int j = 0; j < 12; j++)
 		{
 			if (i >= 0 && i <= 4)
 			{
-				if (Title[i][j] == '1')
+				if (Replay[i][j] == '1')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 				}
-				else if (Title[i][j] == 'E' || Title[i][j] == 'A' || Title[i][j] == 'S' || Title[i][j] == 'Y' || Title[i][j] == '0')
+				else if (Replay[i][j] == 'R' || Replay[i][j] == 'E' || Replay[i][j] == 'P' || Replay[i][j] == 'L' || Replay[i][j] == 'A' || Replay[i][j] == 'Y' || Replay[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
 			else if (i >= 6 && i <= 10)
 			{
-				if (Title[i][j] == '1')
+				if (Replay[i][j] == '1')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
 				}
-				else if (Title[i][j] == 'N' || Title[i][j] == 'O' || Title[i][j] == 'R' || Title[i][j] == 'M' || Title[i][j] == 'A' || Title[i][j] == 'L' || Title[i][j] == '0')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
-				}
-			}
-			else if (i >= 12 && i <= 16)
-			{
-				if (Title[i][j] == '1')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-				}
-				else if (Title[i][j] == 'H' || Title[i][j] == 'A' || Title[i][j] == 'R' || Title[i][j] == 'D' || Title[i][j] == '0')
+				else if (Replay[i][j] == 'E' || Replay[i][j] == 'X' || Replay[i][j] == 'I' || Replay[i][j] == 'T' || Replay[i][j] == '0')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
 
-			if (Title[i][j] == '0')
+			if (Replay[i][j] == '0')
 			{
 				printf("  ");
 			}
-			else if (Title[i][j] == '1')
+			else if (Replay[i][j] == '1')
 			{
 				printf("■");
 			}
-			else if (Title[i][j] == 'E')
-			{
-				printf("Ｅ");
-			}
-			else if (Title[i][j] == 'A')
-			{
-				printf("Ａ");
-			}
-			else if (Title[i][j] == 'S')
-			{
-				printf("Ｓ");
-			}
-			else if (Title[i][j] == 'Y')
-			{
-				printf("Ｙ");
-			}
-			else if (Title[i][j] == 'N')
-			{
-				printf("Ｎ");
-			}
-			else if (Title[i][j] == 'O')
-			{
-				printf("Ｏ");
-			}
-			else if (Title[i][j] == 'R')
+			else if (Replay[i][j] == 'R')
 			{
 				printf("Ｒ");
 			}
-			else if (Title[i][j] == 'M')
+			else if (Replay[i][j] == 'E')
 			{
-				printf("Ｍ");
+				printf("Ｅ");
 			}
-			else if (Title[i][j] == 'L')
+			else if (Replay[i][j] == 'P')
+			{
+				printf("Ｐ");
+			}
+			else if (Replay[i][j] == 'L')
 			{
 				printf("Ｌ");
 			}
-			else if (Title[i][j] == 'H')
+			else if (Replay[i][j] == 'A')
 			{
-				printf("Ｈ");
+				printf("Ａ");
 			}
-			else if (Title[i][j] == 'D')
+			else if (Replay[i][j] == 'Y')
 			{
-				printf("Ｄ");
+				printf("Ｙ");
+			}
+			else if (Replay[i][j] == 'X')
+			{
+				printf("Ｘ");
+			}
+			else if (Replay[i][j] == 'I')
+			{
+				printf("Ｉ");
+			}
+			else if (Replay[i][j] == 'T')
+			{
+				printf("Ｔ");
 			}
 		}
 		printf("\n");
@@ -1601,15 +1582,17 @@ void Keyboard(SelectCard * Select)
 		}
 		switch (key)
 		{
-		case SPACE:	   if (Scene == 0 && Select->y == 2)  { diff = Easy; Scene++; Select->y = 0; CreateCard(); }
-				  else if (Scene == 0 && Select->y == 8) { diff = Normal; Scene++; Select->y = 0; CreateCard(); }
-				  else if (Scene == 0 && Select->y == 14) { diff = Hard; Scene++; Select->y = 0; CreateCard(); }
+		case SPACE:	   if (Scene == 0 && Select->y == 2) { diff = Easy; Scene++; MatchEasy = 10; }
+				  else if (Scene == 0 && Select->y == 8) { diff = Normal; Scene++; MatchNormal = 24; }
+				  else if (Scene == 0 && Select->y == 14) { diff = Hard; Scene++; MatchHard = 48; }
 				  else if (Scene == 1 && Check == 0 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 0 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 0 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 1 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
 				  else if (Scene == 1 && Check == 1 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
 				  else if (Scene == 1 && Check == 1 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+				  else if (Scene == 2 && Select->y == 4) { Scene = 0; }
+				  else if (Scene == 2 && Select->y == 10) { exit(0); }
 			break;
 
 		case LEFT:	   if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
@@ -1622,12 +1605,14 @@ void Keyboard(SelectCard * Select)
 
 		case UP:	   if (Scene == 0 && Select->y - 6 >= 0) { Select->y -= 6; }
 				  else if (Scene == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
+				  else if (Scene == 2 && Select->y - 6 >= 0) { Select->y -= 6; }
 			break;
 
 		case DOWN:	   if (Scene == 0 && Select->y + 6 <= 14) { Select->y += 6; }
 				  else if (Scene == 1 && diff == Easy && Select->y / 2 + 1 < EASY_HEIGHT / 2) { Select->y += 2; }
 				  else if (Scene == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
 				  else if (Scene == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
+				  else if (Scene == 2 && Select->y + 6 <= 10) { Select->y += 6; }
 			break;
 
 		default:
@@ -1641,12 +1626,14 @@ int main()
 	CursorView();
 	SelectCard Select = { 0, 2, "☞"};
 	CurrentCard Current = { 0, 0, "선택한 카드 : ", ' '};
-	CreateTitle();
+	CreateMain();
+	CreateReplay();
 	while (1)
 	{
+		Select.y = 2;
 		while (Scene == 0)
 		{
-			TitleRender();
+			MainRender();
 			Keyboard(&Select);
 			GotoXY(Select.x, Select.y);
 			printf("%s", Select.shape);
@@ -1654,7 +1641,9 @@ int main()
 			system("cls");
 		}
 
+		CreateCard();
 		Countdown();
+		Select.y = 0;
 
 		while (Scene == 1)
 		{
@@ -1674,9 +1663,6 @@ int main()
 				{
 					Current.show = Memory[0];
 				}
-				GotoXY(Current.x, Current.y);
-				printf("%s", Current.text);
-				ShowCard(&Current);
 			}
 			else if (diff == Normal)
 			{
@@ -1689,9 +1675,6 @@ int main()
 				{
 					Current.show = Memory[0];
 				}
-				GotoXY(Current.x, Current.y);
-				printf("%s", Current.text);
-				ShowCard(&Current);
 			}
 			else if (diff == Hard)
 			{
@@ -1704,16 +1687,28 @@ int main()
 				{
 					Current.show = Memory[0];
 				}
-				GotoXY(Current.x, Current.y);
-				printf("%s", Current.text);
-				ShowCard(&Current);
 			}
+			GotoXY(Current.x, Current.y);
+			printf("%s", Current.text);
+			ShowCard(&Current);
 			Sleep(100);
 			system("cls");
 		}
 
-		Cleargame();
-		break;
+		Select.x = 0;
+		Select.y = 4;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+		Sleep(200);
+		
+		while (Scene == 2)
+		{
+			ReplayRender();
+			Keyboard(&Select);
+			GotoXY(Select.x, Select.y);
+			printf("%s", Select.shape);
+			Sleep(100);
+			system("cls");
+		}
 	}
 	return 0;
 }
