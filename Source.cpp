@@ -18,20 +18,17 @@
 #define HARD_WIDTH 24	 // 난이도(Hard)의 가로 길이
 #define HARD_HEIGHT 16	 // 난이도(Hard)의 세로 길이
 
-char Main[17][13];								// 2차원 문자열(난이도 선택)
-char Replay[11][13];							// 2차원 문자열(다시하기)
-char CardEasy[EASY_HEIGHT][EASY_WIDTH];			// Easy 5 X 4
-char CardNormal[NORMAL_HEIGHT][NORMAL_WIDTH];	// Normal 8 X 6
-char CardHard[HARD_HEIGHT][HARD_WIDTH];			// Hard 12 X 8
+char Main[17][13];								// 난이도 선택 화면 배열 구조
+char Replay[11][13];							// 다시하기 화면 배열 구조
+char BoardEasy[EASY_HEIGHT][EASY_WIDTH];		// 보드 크기(Easy) : 5 X 4
+char BoardNormal[NORMAL_HEIGHT][NORMAL_WIDTH];  // 보드 크기(Normal) : 8 X 6
+char BoardHard[HARD_HEIGHT][HARD_WIDTH];		// 보드 크기(Hard) : 12 X 8
 
-int Scene = 0; // Scene 변경을 확인하는 변수
-int Check = 0; // 인게임 중 카드 선택 여부를 확인하는 변수
-char Memory[7]; // [0] = 첫번째로 선택한 카드의 모양 / [1] = 첫번째 카드의 y좌표 / [2] = 첫번째 카드의 x좌표
-				// [3] = 두번째로 선택한 카드의 모양 / [4] = 두번째 카드의 y좌표 / [5] = 두번째 카드의 x좌표
-
-int MatchEasy;	  // Easy 난이도에서 맞춰야하는 짝의 개수 (10개)
-int MatchNormal; // Normal 난이도에서 맞춰야하는 짝의 개수 (24개)
-int MatchHard;	  // Hard 난이도에서 맞춰야하는 짝의 개수 (48개)
+int Scene = 0;  // 현재 화면을 확인하는 변수 (0 = 난이도 선택, 1 = 인게임, 2 = 다시하기)
+int Check = 0;  // 인게임 중 카드를 선택했는지 확인하는 변수 (0 = 선택 안 함, 1 = 선택함)
+int Count;		// 맞춰야하는 짝의 개수 (Easy = 10, Normal = 24, Hard = 48)
+char Memory[7]; // [0] = 첫번째로 선택한 카드 이미지 / [1] = 첫번째 카드의 y좌표 / [2] = 첫번째 카드의 x좌표
+				// [3] = 두번째로 선택한 카드 이미지 / [4] = 두번째 카드의 y좌표 / [5] = 두번째 카드의 x좌표
 
 #pragma region 난이도별 보드 크기 설정
 
@@ -278,7 +275,7 @@ void CreateCard()
 					int k = 0;
 					while (k < EASY_WIDTH)
 					{
-						CardEasy[i][k] = 'x';
+						BoardEasy[i][k] = 'x';
 						k++;
 					}
 					break;
@@ -286,7 +283,7 @@ void CreateCard()
 				
 				if (j % 2 == 0)
 				{
-					CardEasy[i][j] = 'x';
+					BoardEasy[i][j] = 'x';
 					j++;
 				}
 				else
@@ -300,34 +297,34 @@ void CreateCard()
 					{
 						switch (Card)
 						{
-						case 0: ArrEasy[0]++; CardEasy[i][j] = '0';
+						case 0: ArrEasy[0]++; BoardEasy[i][j] = '0';
 							break;
 
-						case 1: ArrEasy[1]++; CardEasy[i][j] = '1';
+						case 1: ArrEasy[1]++; BoardEasy[i][j] = '1';
 							break;
 
-						case 2: ArrEasy[2]++; CardEasy[i][j] = '2';
+						case 2: ArrEasy[2]++; BoardEasy[i][j] = '2';
 							break;
 
-						case 3: ArrEasy[3]++; CardEasy[i][j] = '3';
+						case 3: ArrEasy[3]++; BoardEasy[i][j] = '3';
 							break;
 
-						case 4: ArrEasy[4]++; CardEasy[i][j] = '4';
+						case 4: ArrEasy[4]++; BoardEasy[i][j] = '4';
 							break;
 
-						case 5: ArrEasy[5]++; CardEasy[i][j] = '5';
+						case 5: ArrEasy[5]++; BoardEasy[i][j] = '5';
 							break;
 
-						case 6: ArrEasy[6]++; CardEasy[i][j] = '6';
+						case 6: ArrEasy[6]++; BoardEasy[i][j] = '6';
 							break;
 
-						case 7: ArrEasy[7]++; CardEasy[i][j] = '7';
+						case 7: ArrEasy[7]++; BoardEasy[i][j] = '7';
 							break;
 
-						case 8: ArrEasy[8]++; CardEasy[i][j] = '8';
+						case 8: ArrEasy[8]++; BoardEasy[i][j] = '8';
 							break;
 
-						case 9: ArrEasy[9]++; CardEasy[i][j] = '9';
+						case 9: ArrEasy[9]++; BoardEasy[i][j] = '9';
 							break;
 
 						default:
@@ -358,7 +355,7 @@ void CreateCard()
 					int k = 0;
 					while (k < NORMAL_WIDTH)
 					{
-						CardNormal[i][k] = 'x';
+						BoardNormal[i][k] = 'x';
 						k++;
 					}
 					break;
@@ -366,7 +363,7 @@ void CreateCard()
 
 				if (j % 2 == 0)
 				{
-					CardNormal[i][j] = 'x';
+					BoardNormal[i][j] = 'x';
 					j++;
 				}
 				else
@@ -380,76 +377,76 @@ void CreateCard()
 					{
 						switch (Card)
 						{
-						case 0: ArrNormal[0]++; CardNormal[i][j] = '0';
+						case 0: ArrNormal[0]++; BoardNormal[i][j] = '0';
 							break;
 
-						case 1: ArrNormal[1]++; CardNormal[i][j] = '1';
+						case 1: ArrNormal[1]++; BoardNormal[i][j] = '1';
 							break;
 
-						case 2: ArrNormal[2]++; CardNormal[i][j] = '2';
+						case 2: ArrNormal[2]++; BoardNormal[i][j] = '2';
 							break;
 
-						case 3: ArrNormal[3]++; CardNormal[i][j] = '3';
+						case 3: ArrNormal[3]++; BoardNormal[i][j] = '3';
 							break;
 
-						case 4: ArrNormal[4]++; CardNormal[i][j] = '4';
+						case 4: ArrNormal[4]++; BoardNormal[i][j] = '4';
 							break;
 
-						case 5: ArrNormal[5]++; CardNormal[i][j] = '5';
+						case 5: ArrNormal[5]++; BoardNormal[i][j] = '5';
 							break;
 
-						case 6: ArrNormal[6]++; CardNormal[i][j] = '6';
+						case 6: ArrNormal[6]++; BoardNormal[i][j] = '6';
 							break;
 
-						case 7: ArrNormal[7]++; CardNormal[i][j] = '7';
+						case 7: ArrNormal[7]++; BoardNormal[i][j] = '7';
 							break;
 
-						case 8: ArrNormal[8]++; CardNormal[i][j] = '8';
+						case 8: ArrNormal[8]++; BoardNormal[i][j] = '8';
 							break;
 
-						case 9: ArrNormal[9]++; CardNormal[i][j] = '9';
+						case 9: ArrNormal[9]++; BoardNormal[i][j] = '9';
 							break;
 
-						case 10: ArrNormal[10]++; CardNormal[i][j] = 'A';
+						case 10: ArrNormal[10]++; BoardNormal[i][j] = 'A';
 							break;
 
-						case 11: ArrNormal[11]++; CardNormal[i][j] = 'B';
+						case 11: ArrNormal[11]++; BoardNormal[i][j] = 'B';
 							break;
 
-						case 12: ArrNormal[12]++; CardNormal[i][j] = 'C';
+						case 12: ArrNormal[12]++; BoardNormal[i][j] = 'C';
 							break;
 
-						case 13: ArrNormal[13]++; CardNormal[i][j] = 'D';
+						case 13: ArrNormal[13]++; BoardNormal[i][j] = 'D';
 							break;
 
-						case 14: ArrNormal[14]++; CardNormal[i][j] = 'E';
+						case 14: ArrNormal[14]++; BoardNormal[i][j] = 'E';
 							break;
 
-						case 15: ArrNormal[15]++; CardNormal[i][j] = 'F';
+						case 15: ArrNormal[15]++; BoardNormal[i][j] = 'F';
 							break;
 
-						case 16: ArrNormal[16]++; CardNormal[i][j] = 'G';
+						case 16: ArrNormal[16]++; BoardNormal[i][j] = 'G';
 							break;
 
-						case 17: ArrNormal[17]++; CardNormal[i][j] = 'H';
+						case 17: ArrNormal[17]++; BoardNormal[i][j] = 'H';
 							break;
 
-						case 18: ArrNormal[18]++; CardNormal[i][j] = 'I';
+						case 18: ArrNormal[18]++; BoardNormal[i][j] = 'I';
 							break;
 
-						case 19: ArrNormal[19]++; CardNormal[i][j] = 'J';
+						case 19: ArrNormal[19]++; BoardNormal[i][j] = 'J';
 							break;
 
-						case 20: ArrNormal[20]++; CardNormal[i][j] = 'K';
+						case 20: ArrNormal[20]++; BoardNormal[i][j] = 'K';
 							break;
 
-						case 21: ArrNormal[21]++; CardNormal[i][j] = 'L';
+						case 21: ArrNormal[21]++; BoardNormal[i][j] = 'L';
 							break;
 
-						case 22: ArrNormal[22]++; CardNormal[i][j] = 'M';
+						case 22: ArrNormal[22]++; BoardNormal[i][j] = 'M';
 							break;
 
-						case 23: ArrNormal[23]++; CardNormal[i][j] = 'N';
+						case 23: ArrNormal[23]++; BoardNormal[i][j] = 'N';
 							break;
 
 						default:
@@ -480,7 +477,7 @@ void CreateCard()
 					int k = 0;
 					while (k < HARD_WIDTH)
 					{
-						CardHard[i][k] = 'x';
+						BoardHard[i][k] = 'x';
 						k++;
 					}
 					break;
@@ -488,7 +485,7 @@ void CreateCard()
 
 				if (j % 2 == 0)
 				{
-					CardHard[i][j] = 'x';
+					BoardHard[i][j] = 'x';
 					j++;
 				}
 				else
@@ -502,148 +499,148 @@ void CreateCard()
 					{
 						switch (Card)
 						{
-						case 0: ArrHard[0]++; CardHard[i][j] = '0';
+						case 0: ArrHard[0]++; BoardHard[i][j] = '0';
 							break;
 
-						case 1: ArrHard[1]++; CardHard[i][j] = '1';
+						case 1: ArrHard[1]++; BoardHard[i][j] = '1';
 							break;
 
-						case 2: ArrHard[2]++; CardHard[i][j] = '2';
+						case 2: ArrHard[2]++; BoardHard[i][j] = '2';
 							break;
 
-						case 3: ArrHard[3]++; CardHard[i][j] = '3';
+						case 3: ArrHard[3]++; BoardHard[i][j] = '3';
 							break;
 
-						case 4: ArrHard[4]++; CardHard[i][j] = '4';
+						case 4: ArrHard[4]++; BoardHard[i][j] = '4';
 							break;
 
-						case 5: ArrHard[5]++; CardHard[i][j] = '5';
+						case 5: ArrHard[5]++; BoardHard[i][j] = '5';
 							break;
 
-						case 6: ArrHard[6]++; CardHard[i][j] = '6';
+						case 6: ArrHard[6]++; BoardHard[i][j] = '6';
 							break;
 
-						case 7: ArrHard[7]++; CardHard[i][j] = '7';
+						case 7: ArrHard[7]++; BoardHard[i][j] = '7';
 							break;
 
-						case 8: ArrHard[8]++; CardHard[i][j] = '8';
+						case 8: ArrHard[8]++; BoardHard[i][j] = '8';
 							break;
 
-						case 9: ArrHard[9]++; CardHard[i][j] = '9';
+						case 9: ArrHard[9]++; BoardHard[i][j] = '9';
 							break;
 
-						case 10: ArrHard[10]++; CardHard[i][j] = 'A';
+						case 10: ArrHard[10]++; BoardHard[i][j] = 'A';
 							break;
 
-						case 11: ArrHard[11]++; CardHard[i][j] = 'B';
+						case 11: ArrHard[11]++; BoardHard[i][j] = 'B';
 							break;
 
-						case 12: ArrHard[12]++; CardHard[i][j] = 'C';
+						case 12: ArrHard[12]++; BoardHard[i][j] = 'C';
 							break;
 
-						case 13: ArrHard[13]++; CardHard[i][j] = 'D';
+						case 13: ArrHard[13]++; BoardHard[i][j] = 'D';
 							break;
 
-						case 14: ArrHard[14]++; CardHard[i][j] = 'E';
+						case 14: ArrHard[14]++; BoardHard[i][j] = 'E';
 							break;
 
-						case 15: ArrHard[15]++; CardHard[i][j] = 'F';
+						case 15: ArrHard[15]++; BoardHard[i][j] = 'F';
 							break;
 
-						case 16: ArrHard[16]++; CardHard[i][j] = 'G';
+						case 16: ArrHard[16]++; BoardHard[i][j] = 'G';
 							break;
 
-						case 17: ArrHard[17]++; CardHard[i][j] = 'H';
+						case 17: ArrHard[17]++; BoardHard[i][j] = 'H';
 							break;
 
-						case 18: ArrHard[18]++; CardHard[i][j] = 'I';
+						case 18: ArrHard[18]++; BoardHard[i][j] = 'I';
 							break;
 
-						case 19: ArrHard[19]++; CardHard[i][j] = 'J';
+						case 19: ArrHard[19]++; BoardHard[i][j] = 'J';
 							break;
 
-						case 20: ArrHard[20]++; CardHard[i][j] = 'K';
+						case 20: ArrHard[20]++; BoardHard[i][j] = 'K';
 							break;
 
-						case 21: ArrHard[21]++; CardHard[i][j] = 'L';
+						case 21: ArrHard[21]++; BoardHard[i][j] = 'L';
 							break;
 
-						case 22: ArrHard[22]++; CardHard[i][j] = 'M';
+						case 22: ArrHard[22]++; BoardHard[i][j] = 'M';
 							break;
 
-						case 23: ArrHard[23]++; CardHard[i][j] = 'N';
+						case 23: ArrHard[23]++; BoardHard[i][j] = 'N';
 							break;
 
-						case 24: ArrHard[24]++; CardHard[i][j] = 'O';
+						case 24: ArrHard[24]++; BoardHard[i][j] = 'O';
 							break;
 
-						case 25: ArrHard[25]++; CardHard[i][j] = 'P';
+						case 25: ArrHard[25]++; BoardHard[i][j] = 'P';
 							break;
 
-						case 26: ArrHard[26]++; CardHard[i][j] = 'Q';
+						case 26: ArrHard[26]++; BoardHard[i][j] = 'Q';
 							break;
 
-						case 27: ArrHard[27]++; CardHard[i][j] = 'R';
+						case 27: ArrHard[27]++; BoardHard[i][j] = 'R';
 							break;
 
-						case 28: ArrHard[28]++; CardHard[i][j] = 'S';
+						case 28: ArrHard[28]++; BoardHard[i][j] = 'S';
 							break;
 
-						case 29: ArrHard[29]++; CardHard[i][j] = 'T';
+						case 29: ArrHard[29]++; BoardHard[i][j] = 'T';
 							break;
 
-						case 30: ArrHard[30]++; CardHard[i][j] = 'U';
+						case 30: ArrHard[30]++; BoardHard[i][j] = 'U';
 							break;
 
-						case 31: ArrHard[31]++; CardHard[i][j] = 'V';
+						case 31: ArrHard[31]++; BoardHard[i][j] = 'V';
 							break;
 
-						case 32: ArrHard[32]++; CardHard[i][j] = 'W';
+						case 32: ArrHard[32]++; BoardHard[i][j] = 'W';
 							break;
 
-						case 33: ArrHard[33]++; CardHard[i][j] = 'X';
+						case 33: ArrHard[33]++; BoardHard[i][j] = 'X';
 							break;
 
-						case 34: ArrHard[34]++; CardHard[i][j] = 'Y';
+						case 34: ArrHard[34]++; BoardHard[i][j] = 'Y';
 							break;
 
-						case 35: ArrHard[35]++; CardHard[i][j] = 'Z';
+						case 35: ArrHard[35]++; BoardHard[i][j] = 'Z';
 							break;
 
-						case 36: ArrHard[36]++; CardHard[i][j] = 'a';
+						case 36: ArrHard[36]++; BoardHard[i][j] = 'a';
 							break;
 
-						case 37: ArrHard[37]++; CardHard[i][j] = 'b';
+						case 37: ArrHard[37]++; BoardHard[i][j] = 'b';
 							break;
 
-						case 38: ArrHard[38]++; CardHard[i][j] = 'c';
+						case 38: ArrHard[38]++; BoardHard[i][j] = 'c';
 							break;
 
-						case 39: ArrHard[39]++; CardHard[i][j] = 'd';
+						case 39: ArrHard[39]++; BoardHard[i][j] = 'd';
 							break;
 
-						case 40: ArrHard[40]++; CardHard[i][j] = 'e';
+						case 40: ArrHard[40]++; BoardHard[i][j] = 'e';
 							break;
 
-						case 41: ArrHard[41]++; CardHard[i][j] = 'f';
+						case 41: ArrHard[41]++; BoardHard[i][j] = 'f';
 							break;
 
-						case 42: ArrHard[42]++; CardHard[i][j] = 'g';
+						case 42: ArrHard[42]++; BoardHard[i][j] = 'g';
 							break;
 
-						case 43: ArrHard[43]++; CardHard[i][j] = 'h';
+						case 43: ArrHard[43]++; BoardHard[i][j] = 'h';
 							break;
 
-						case 44: ArrHard[44]++; CardHard[i][j] = 'i';
+						case 44: ArrHard[44]++; BoardHard[i][j] = 'i';
 							break;
 
-						case 45: ArrHard[45]++; CardHard[i][j] = 'j';
+						case 45: ArrHard[45]++; BoardHard[i][j] = 'j';
 							break;
 
-						case 46: ArrHard[46]++; CardHard[i][j] = 'k';
+						case 46: ArrHard[46]++; BoardHard[i][j] = 'k';
 							break;
 
-						case 47: ArrHard[47]++; CardHard[i][j] = 'l';
+						case 47: ArrHard[47]++; BoardHard[i][j] = 'l';
 							break;
 
 						}
@@ -669,7 +666,7 @@ void CardRender()
 				{
 					for (int j = 0; j < EASY_WIDTH; j++)
 					{
-						if (CardEasy[i][j] == 'x')
+						if (BoardEasy[i][j] == 'x')
 						{
 							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
 							printf("  ");
@@ -679,43 +676,43 @@ void CardRender()
 							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 						}
 						
-						if (CardEasy[i][j] == '0')
+						if (BoardEasy[i][j] == '0')
 						{
 							printf("●");
 						}
-						else if (CardEasy[i][j] == '1')
+						else if (BoardEasy[i][j] == '1')
 						{
 							printf("▲");
 						}
-						else if (CardEasy[i][j] == '2')
+						else if (BoardEasy[i][j] == '2')
 						{
 							printf("ㄱ");
 						}
-						else if (CardEasy[i][j] == '3')
+						else if (BoardEasy[i][j] == '3')
 						{
 							printf("ㄴ");
 						}
-						else if (CardEasy[i][j] == '4')
+						else if (BoardEasy[i][j] == '4')
 						{
 							printf("Ａ");
 						}
-						else if (CardEasy[i][j] == '5')
+						else if (BoardEasy[i][j] == '5')
 						{
 							printf("Ｂ");
 						}
-						else if (CardEasy[i][j] == '6')
+						else if (BoardEasy[i][j] == '6')
 						{
 							printf("く");
 						}
-						else if (CardEasy[i][j] == '7')
+						else if (BoardEasy[i][j] == '7')
 						{
 							printf("う");
 						}
-						else if (CardEasy[i][j] == '8')
+						else if (BoardEasy[i][j] == '8')
 						{
 							printf("月");
 						}
-						else if (CardEasy[i][j] == '9')
+						else if (BoardEasy[i][j] == '9')
 						{
 							printf("火");
 						}
@@ -728,7 +725,7 @@ void CardRender()
 	{
 		for (int j = 0; j < NORMAL_WIDTH; j++)
 		{
-			if (CardNormal[i][j] == 'x')
+			if (BoardNormal[i][j] == 'x')
 			{
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
 				printf("  ");
@@ -738,99 +735,99 @@ void CardRender()
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 			}
 			
-			if (CardNormal[i][j] == '0')
+			if (BoardNormal[i][j] == '0')
 			{
 				printf("●");
 			}
-			else if (CardNormal[i][j] == '1')
+			else if (BoardNormal[i][j] == '1')
 			{
 				printf("▲");
 			}
-			else if (CardNormal[i][j] == '2')
+			else if (BoardNormal[i][j] == '2')
 			{
 				printf("■");
 			}
-			else if (CardNormal[i][j] == '3')
+			else if (BoardNormal[i][j] == '3')
 			{
 				printf("★");
 			}
-			else if (CardNormal[i][j] == '4')
+			else if (BoardNormal[i][j] == '4')
 			{
 				printf("ㄱ");
 			}
-			else if (CardNormal[i][j] == '5')
+			else if (BoardNormal[i][j] == '5')
 			{
 				printf("ㄴ");
 			}
-			else if (CardNormal[i][j] == '6')
+			else if (BoardNormal[i][j] == '6')
 			{
 				printf("ㄷ");
 			}
-			else if (CardNormal[i][j] == '7')
+			else if (BoardNormal[i][j] == '7')
 			{
 				printf("ㄹ");
 			}
-			else if (CardNormal[i][j] == '8')
+			else if (BoardNormal[i][j] == '8')
 			{
 				printf("Ａ");
 			}
-			else if (CardNormal[i][j] == '9')
+			else if (BoardNormal[i][j] == '9')
 			{
 				printf("Ｂ");
 			}
-			else if (CardNormal[i][j] == 'A')
+			else if (BoardNormal[i][j] == 'A')
 			{
 				printf("Ｃ"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'B')
+			else if (BoardNormal[i][j] == 'B')
 			{
 				printf("Ｄ"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'C')
+			else if (BoardNormal[i][j] == 'C')
 			{
 				printf("く"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'D')
+			else if (BoardNormal[i][j] == 'D')
 			{
 				printf("う"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'E')
+			else if (BoardNormal[i][j] == 'E')
 			{
 				printf("つ"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'F')
+			else if (BoardNormal[i][j] == 'F')
 			{
 				printf("て"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'G')
+			else if (BoardNormal[i][j] == 'G')
 			{
 				printf("月"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'H')
+			else if (BoardNormal[i][j] == 'H')
 			{
 				printf("火"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'I')
+			else if (BoardNormal[i][j] == 'I')
 			{
 				printf("水"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'J')
+			else if (BoardNormal[i][j] == 'J')
 			{
 				printf("土"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'K')
+			else if (BoardNormal[i][j] == 'K')
 			{
 				printf("１"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'L')
+			else if (BoardNormal[i][j] == 'L')
 			{
 				printf("２"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'M')
+			else if (BoardNormal[i][j] == 'M')
 			{
 				printf("３"); // 특수문자 형태
 			}
-			else if (CardNormal[i][j] == 'N')
+			else if (BoardNormal[i][j] == 'N')
 			{
 				printf("４"); // 특수문자 형태
 			}
@@ -843,7 +840,7 @@ void CardRender()
 	{
 		for (int j = 0; j < HARD_WIDTH; j++)
 		{
-			if (CardHard[i][j] == 'x')
+			if (BoardHard[i][j] == 'x')
 			{
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
 				printf("  ");
@@ -853,195 +850,195 @@ void CardRender()
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 			}
 			
-			if (CardHard[i][j] == '0')
+			if (BoardHard[i][j] == '0')
 			{
 				printf("●");
 			}
-			else if (CardHard[i][j] == '1')
+			else if (BoardHard[i][j] == '1')
 			{
 				printf("▲");
 			}
-			else if (CardHard[i][j] == '2')
+			else if (BoardHard[i][j] == '2')
 			{
 				printf("■");
 			}
-			else if (CardHard[i][j] == '3')
+			else if (BoardHard[i][j] == '3')
 			{
 				printf("★");
 			}
-			else if (CardHard[i][j] == '4')
+			else if (BoardHard[i][j] == '4')
 			{
 				printf("♥");
 			}
-			else if (CardHard[i][j] == '5')
+			else if (BoardHard[i][j] == '5')
 			{
 				printf("♣");
 			}
-			else if (CardHard[i][j] == '6')
+			else if (BoardHard[i][j] == '6')
 			{
 				printf("ㄱ");
 			}
-			else if (CardHard[i][j] == '7')
+			else if (BoardHard[i][j] == '7')
 			{
 				printf("ㄴ");
 			}
-			else if (CardHard[i][j] == '8')
+			else if (BoardHard[i][j] == '8')
 			{
 				printf("ㄷ");
 			}
-			else if (CardHard[i][j] == '9')
+			else if (BoardHard[i][j] == '9')
 			{
 				printf("ㄹ");
 			}
-			else if (CardHard[i][j] == 'A')
+			else if (BoardHard[i][j] == 'A')
 			{
 				printf("ㅁ"); // 특수문자 형태 A
 			}
-			else if (CardHard[i][j] == 'B')
+			else if (BoardHard[i][j] == 'B')
 			{
 				printf("ㅂ"); // 특수문자 형태 B
 			}
-			else if (CardHard[i][j] == 'C')
+			else if (BoardHard[i][j] == 'C')
 			{
 				printf("Ａ"); // 특수문자 형태 C
 			}
-			else if (CardHard[i][j] == 'D')
+			else if (BoardHard[i][j] == 'D')
 			{
 				printf("Ｂ"); // 특수문자 형태 D
 			}
-			else if (CardHard[i][j] == 'E')
+			else if (BoardHard[i][j] == 'E')
 			{
 				printf("Ｃ"); // 특수문자 형태 E
 			}
-			else if (CardHard[i][j] == 'F')
+			else if (BoardHard[i][j] == 'F')
 			{
 				printf("Ｄ"); // 특수문자 형태 F
 			}
-			else if (CardHard[i][j] == 'G')
+			else if (BoardHard[i][j] == 'G')
 			{
 				printf("Ｅ"); // 특수문자 형태 G
 			}
-			else if (CardHard[i][j] == 'H')
+			else if (BoardHard[i][j] == 'H')
 			{
 				printf("Ｆ"); // 특수문자 형태 H
 			}
-			else if (CardHard[i][j] == 'I')
+			else if (BoardHard[i][j] == 'I')
 			{
 				printf("く"); // 특수문자 형태 I
 			}
-			else if (CardHard[i][j] == 'J')
+			else if (BoardHard[i][j] == 'J')
 			{
 				printf("う"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'K')
+			else if (BoardHard[i][j] == 'K')
 			{
 				printf("つ"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'L')
+			else if (BoardHard[i][j] == 'L')
 			{
 				printf("て"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'M')
+			else if (BoardHard[i][j] == 'M')
 			{
 				printf("の"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'N')
+			else if (BoardHard[i][j] == 'N')
 			{
 				printf("ん"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'O')
+			else if (BoardHard[i][j] == 'O')
 			{
 				printf("月"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'P')
+			else if (BoardHard[i][j] == 'P')
 			{
 				printf("火"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'Q')
+			else if (BoardHard[i][j] == 'Q')
 			{
 				printf("水"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'R')
+			else if (BoardHard[i][j] == 'R')
 			{
 				printf("土"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'S')
+			else if (BoardHard[i][j] == 'S')
 			{
 				printf("口"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'T')
+			else if (BoardHard[i][j] == 'T')
 			{
 				printf("力"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'U')
+			else if (BoardHard[i][j] == 'U')
 			{
 				printf("１"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'V')
+			else if (BoardHard[i][j] == 'V')
 			{
 				printf("２"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'W')
+			else if (BoardHard[i][j] == 'W')
 			{
 				printf("３"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'X')
+			else if (BoardHard[i][j] == 'X')
 			{
 				printf("４"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'Y')
+			else if (BoardHard[i][j] == 'Y')
 			{
 				printf("５"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'Z')
+			else if (BoardHard[i][j] == 'Z')
 			{
 				printf("６"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'a')
+			else if (BoardHard[i][j] == 'a')
 			{
 				printf("＃"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'b')
+			else if (BoardHard[i][j] == 'b')
 			{
 				printf("＆"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'c')
+			else if (BoardHard[i][j] == 'c')
 			{
 				printf("＠"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'd')
+			else if (BoardHard[i][j] == 'd')
 			{
 				printf("※"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'e')
+			else if (BoardHard[i][j] == 'e')
 			{
 				printf("☎"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'f')
+			else if (BoardHard[i][j] == 'f')
 			{
 				printf("♬"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'g')
+			else if (BoardHard[i][j] == 'g')
 			{
 				printf("π"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'h')
+			else if (BoardHard[i][j] == 'h')
 			{
 				printf("○"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'i')
+			else if (BoardHard[i][j] == 'i')
 			{
 				printf("◇"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'j')
+			else if (BoardHard[i][j] == 'j')
 			{
 				printf("▽"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'k')
+			else if (BoardHard[i][j] == 'k')
 			{
 				printf("♤"); // 특수문자 형태 J
 			}
-			else if (CardHard[i][j] == 'l')
+			else if (BoardHard[i][j] == 'l')
 			{
 				printf("♨"); // 특수문자 형태 J
 			}
@@ -1095,30 +1092,30 @@ void Ingame()
 	switch (diff)
 	{
 	case Easy: if (Memory[0] == Memory[3]) {
-		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { MatchEasy--; CardEasy[Memory[1]][Memory[2]] = 'x'; CardEasy[Memory[4]][Memory[5]] = 'x'; Check--; }
+		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { Count--; BoardEasy[Memory[1]][Memory[2]] = 'x'; BoardEasy[Memory[4]][Memory[5]] = 'x'; Check--; }
 		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 	}
 			 else { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 
-			 if (MatchEasy == 0) { Scene++; }
+			 if (Count == 0) { Scene++; }
 			 break;
 
 	case Normal: if (Memory[0] == Memory[3]) {
-		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { MatchNormal--; CardNormal[Memory[1]][Memory[2]] = 'x'; CardNormal[Memory[4]][Memory[5]] = 'x'; Check--; }
+		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { Count--; BoardNormal[Memory[1]][Memory[2]] = 'x'; BoardNormal[Memory[4]][Memory[5]] = 'x'; Check--; }
 		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 	}
 			   else { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 
-			   if (MatchNormal == 0) { Scene++; }
+			   if (Count == 0) { Scene++; }
 			   break;
 
 	case Hard: if (Memory[0] == Memory[3]) {
-		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { MatchHard--; CardHard[Memory[1]][Memory[2]] = 'x'; CardHard[Memory[4]][Memory[5]] = 'x'; Check--; }
+		if (Memory[1] != Memory[4] || Memory[2] != Memory[5]) { Count--; BoardHard[Memory[1]][Memory[2]] = 'x'; BoardHard[Memory[4]][Memory[5]] = 'x'; Check--; }
 		else if (Memory[1] == Memory[4] && Memory[2] == Memory[5]) { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 	}
 			 else { int i = 0; while (i < 6) { Memory[i] = 'z'; i++; } Check--; }
 
-			 if (MatchHard == 0) { Scene++; }
+			 if (Count == 0) { Scene++; }
 			 break;
 
 	default:
@@ -1582,15 +1579,15 @@ void Keyboard(SelectCard * Select)
 		}
 		switch (key)
 		{
-		case SPACE:	   if (Scene == 0 && Select->y == 2) { diff = Easy; Scene++; MatchEasy = 10; }
-				  else if (Scene == 0 && Select->y == 8) { diff = Normal; Scene++; MatchNormal = 24; }
-				  else if (Scene == 0 && Select->y == 14) { diff = Hard; Scene++; MatchHard = 48; }
-				  else if (Scene == 1 && Check == 0 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 0 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 0 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = CardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 1 && diff == Easy && CardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
-				  else if (Scene == 1 && Check == 1 && diff == Normal && CardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
-				  else if (Scene == 1 && Check == 1 && diff == Hard && CardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = CardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+		case SPACE:	   if (Scene == 0 && Select->y == 2) { diff = Easy; Scene++; Count = 10; }
+				  else if (Scene == 0 && Select->y == 8) { diff = Normal; Scene++; Count = 24; }
+				  else if (Scene == 0 && Select->y == 14) { diff = Hard; Scene++; Count = 48; }
+				  else if (Scene == 1 && Check == 0 && diff == Easy && BoardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = BoardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Scene == 1 && Check == 0 && diff == Normal && BoardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = BoardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Scene == 1 && Check == 0 && diff == Hard && BoardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = BoardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
+				  else if (Scene == 1 && Check == 1 && diff == Easy && BoardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+				  else if (Scene == 1 && Check == 1 && diff == Normal && BoardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
+				  else if (Scene == 1 && Check == 1 && diff == Hard && BoardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
 				  else if (Scene == 2 && Select->y == 4) { Scene = 0; }
 				  else if (Scene == 2 && Select->y == 10) { exit(0); }
 			break;
@@ -1652,41 +1649,28 @@ int main()
 			GotoXY(Select.x, Select.y);
 			printf("%s", Select.shape);
 
-			if (diff == Easy)
+			switch (diff)
 			{
-				Current.y = 8;
-				if (Check == 0)
-				{
-					Current.show = ' ';
-				}
-				else if(Check == 1)
-				{
-					Current.show = Memory[0];
-				}
+			case Easy: Current.y = 8;
+				break;
+
+			case Normal: Current.y = 12;
+				break;
+
+			case Hard: Current.y = 16;
+				break;
+
+			default:
+				break;
 			}
-			else if (diff == Normal)
+
+			if (Check == 0)
 			{
-				Current.y = 12;
-				if (Check == 0)
-				{
-					Current.show = ' ';
-				}
-				else if (Check == 1)
-				{
-					Current.show = Memory[0];
-				}
+				Current.show = ' ';
 			}
-			else if (diff == Hard)
+			else if (Check == 1)
 			{
-				Current.y = 16;
-				if (Check == 0)
-				{
-					Current.show = ' ';
-				}
-				else if (Check == 1)
-				{
-					Current.show = Memory[0];
-				}
+				Current.show = Memory[0];
 			}
 			GotoXY(Current.x, Current.y);
 			printf("%s", Current.text);
