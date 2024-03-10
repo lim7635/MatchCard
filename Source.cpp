@@ -1087,7 +1087,7 @@ void Countdown()
 }
 
 // 카드의 짝이 맞는지 확인하는 함수
-void Ingame()
+void Result()
 { 
 	switch (diff)
 	{
@@ -1569,36 +1569,29 @@ void ReplayRender()
 // 키보드 함수
 void Keyboard(SelectCard * Select)
 {
-	char key = 0;
+	int key = 0;
 	if (_kbhit()) // 키보드 입력 확인 함수(true / false)
 	{
 		key = _getch(); // key 입력을 받아주는 함수
-		if (key == -32)
+		if (key == 224)
 		{
 			key = _getch();
 		}
 		switch (key)
 		{
-		case SPACE:	   if (Scene == 0 && Select->y == 2) { diff = Easy; Scene++; Count = 10; }
-				  else if (Scene == 0 && Select->y == 8) { diff = Normal; Scene++; Count = 24; }
+		case SPACE:	   if (Scene == 0 && Select->y == 2)  { diff = Easy; Scene++; Count = 10; }
+				  else if (Scene == 0 && Select->y == 8)  { diff = Normal; Scene++; Count = 24; }
 				  else if (Scene == 0 && Select->y == 14) { diff = Hard; Scene++; Count = 48; }
 				  else if (Scene == 1 && Check == 0 && diff == Easy && BoardEasy[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = BoardEasy[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 0 && diff == Normal && BoardNormal[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = BoardNormal[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
 				  else if (Scene == 1 && Check == 0 && diff == Hard && BoardHard[Select->y][Select->x / 2 + 1] != 'x') { Check++; Memory[0] = BoardHard[Select->y][Select->x / 2 + 1]; Memory[1] = Select->y; Memory[2] = Select->x / 2 + 1; }
-				  else if (Scene == 1 && Check == 1 && diff == Easy && BoardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
-				  else if (Scene == 1 && Check == 1 && diff == Normal && BoardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
-				  else if (Scene == 1 && Check == 1 && diff == Hard && BoardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Ingame(); }
-				  else if (Scene == 2 && Select->y == 4) { Scene = 0; }
+				  else if (Scene == 1 && Check == 1 && diff == Easy && BoardEasy[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardEasy[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Result(); }
+				  else if (Scene == 1 && Check == 1 && diff == Normal && BoardNormal[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardNormal[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Result(); }
+				  else if (Scene == 1 && Check == 1 && diff == Hard && BoardHard[Select->y][Select->x / 2 + 1] != 'x') { Memory[3] = BoardHard[Select->y][Select->x / 2 + 1]; Memory[4] = Select->y; Memory[5] = Select->x / 2 + 1; Result(); }
+				  else if (Scene == 2 && Select->y == 4)  { Scene = 0; }
 				  else if (Scene == 2 && Select->y == 10) { exit(0); }
 			break;
 
-		case LEFT:	   if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
-			break;
-
-		case RIGHT:	   if (Scene == 1 && diff == Easy && Select->x / 4 + 1 < EASY_WIDTH / 2) { Select->x += 4; }
-				  else if (Scene == 1 && diff == Normal && Select->x / 4 + 1 < NORMAL_WIDTH / 2) { Select->x += 4; }
-				  else if (Scene == 1 && diff == Hard && Select->x / 4 + 1 < HARD_WIDTH / 2) { Select->x += 4; }
-			break;
 
 		case UP:	   if (Scene == 0 && Select->y - 6 >= 0) { Select->y -= 6; }
 				  else if (Scene == 1 && Select->y / 2 - 1 >= 0) { Select->y -= 2; }
@@ -1610,6 +1603,14 @@ void Keyboard(SelectCard * Select)
 				  else if (Scene == 1 && diff == Normal && Select->y / 2 + 1 < NORMAL_HEIGHT / 2) { Select->y += 2; }
 				  else if (Scene == 1 && diff == Hard && Select->y / 2 + 1 < HARD_HEIGHT / 2) { Select->y += 2; }
 				  else if (Scene == 2 && Select->y + 6 <= 10) { Select->y += 6; }
+			break;
+
+		case LEFT:	   if (Scene == 1 && Select->x / 4 - 1 >= 0) { Select->x -= 4; }
+			break;
+
+		case RIGHT:	   if (Scene == 1 && diff == Easy && Select->x / 4 + 1 < EASY_WIDTH / 2) { Select->x += 4; }
+				  else if (Scene == 1 && diff == Normal && Select->x / 4 + 1 < NORMAL_WIDTH / 2) { Select->x += 4; }
+				  else if (Scene == 1 && diff == Hard && Select->x / 4 + 1 < HARD_WIDTH / 2) { Select->x += 4; }
 			break;
 
 		default:
