@@ -155,41 +155,62 @@ void CreateMain()
 }
 
 // 메인 화면 색깔 & 이미지 변경 후 출력 함수
-void MainRender()
+void MainRender(SelectCard * Select)
 {
 	for (int i = 0; i < 17; i++)
 	{
 		for (int j = 0; j < 12; j++)
 		{
-			if (i >= 0 && i <= 4)
+			if (Select->y == 2)
 			{
-				if (Main[i][j] == '1')
+				if (i >= 0 && i <= 4 && Main[i][j] == '1')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 				}
-				else if (Main[i][j] == 'E' || Main[i][j] == 'A' || Main[i][j] == 'S' || Main[i][j] == 'Y' || Main[i][j] == '0')
+				else if (i >= 5)
+				{
+					if (Main[i][j] == '1')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
+				}
+				else
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
-			else if (i >= 6 && i <= 10)
+			else if (Select->y == 8)
 			{
-				if (Main[i][j] == '1')
+				if (i >= 6 && i <= 10 && Main[i][j] == '1')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 				}
-				else if (Main[i][j] == 'N' || Main[i][j] == 'O' || Main[i][j] == 'R' || Main[i][j] == 'M' || Main[i][j] == 'A' || Main[i][j] == 'L' || Main[i][j] == '0')
+				else if (i <= 5 || i >= 11)
+				{
+					if (Main[i][j] == '1')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
+				}
+				else
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
-			else if (i >= 12 && i <= 16)
+			else if (Select->y == 14)
 			{
-				if (Main[i][j] == '1')
+				if (i >= 12 && i <= 16 && Main[i][j] == '1')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 				}
-				else if (Main[i][j] == 'H' || Main[i][j] == 'A' || Main[i][j] == 'R' || Main[i][j] == 'D' || Main[i][j] == '0')
+				else if (i <= 11)
+				{
+					if (Main[i][j] == '1')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
+				}
+				else
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
@@ -1487,31 +1508,45 @@ void CreateReplay()
 }
 
 // 다시 하기 화면 색깔 & 이미지 변경 후 출력 함수
-void ReplayRender()
+void ReplayRender(SelectCard * Select)
 {
 	printf("ＧＡＭＥ ＣＬＥＡＲ!!\n\n");
 	for (int i = 0; i < 11; i++)
 	{
 		for (int j = 0; j < 12; j++)
 		{
-			if (i >= 0 && i <= 4)
+			if (Select->y == 4)
 			{
-				if (Replay[i][j] == '1')
+				if (i >= 0 && i <= 4 && Replay[i][j] == '1')
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 				}
-				else if (Replay[i][j] == 'R' || Replay[i][j] == 'E' || Replay[i][j] == 'P' || Replay[i][j] == 'L' || Replay[i][j] == 'A' || Replay[i][j] == 'Y' || Replay[i][j] == '0')
+				else if (i >= 5)
+				{
+					if (Replay[i][j] == '1')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
+				}
+				else
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
 			}
-			else if (i >= 6 && i <= 10)
+			else if (Select->y == 10)
 			{
-				if (Replay[i][j] == '1')
+				if (i >= 6 && i <= 10 && Replay[i][j] == '1')
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
 				}
-				else if (Replay[i][j] == 'E' || Replay[i][j] == 'X' || Replay[i][j] == 'I' || Replay[i][j] == 'T' || Replay[i][j] == '0')
+				else if (i <= 5)
+				{
+					if (Replay[i][j] == '1')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
+				}
+				else
 				{
 					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 				}
@@ -1631,7 +1666,7 @@ int main()
 		Select.y = 2;
 		while (Scene == 0)
 		{
-			MainRender();
+			MainRender(&Select);
 			Keyboard(&Select);
 			GotoXY(Select.x, Select.y);
 			printf("%s", Select.shape);
@@ -1639,6 +1674,7 @@ int main()
 			system("cls");
 		}
 
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 		CreateCard();
 		Countdown();
 		Select.y = 0;
@@ -1687,7 +1723,7 @@ int main()
 		
 		while (Scene == 2)
 		{
-			ReplayRender();
+			ReplayRender(&Select);
 			Keyboard(&Select);
 			GotoXY(Select.x, Select.y);
 			printf("%s", Select.shape);
