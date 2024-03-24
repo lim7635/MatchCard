@@ -163,56 +163,77 @@ void MainRender(SelectCard * Select)
 		{
 			if (Select->y == 2)
 			{
-				if (i >= 0 && i <= 4 && Main[i][j] == '1')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
-				}
-				else if (i >= 5)
+				if (i >= 0 && i <= 4)
 				{
 					if (Main[i][j] == '1')
 					{
-						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 					}
 				}
-				else
+				else if (i >= 5)
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+					if (Main[i][j] == '0')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
 				}
 			}
 			else if (Select->y == 8)
 			{
-				if (i >= 6 && i <= 10 && Main[i][j] == '1')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
-				}
-				else if (i <= 5 || i >= 11)
+				if (i >= 6 && i <= 10)
 				{
 					if (Main[i][j] == '1')
 					{
-						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 					}
 				}
-				else
+				else if (i <= 5 || i >= 11)
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+					if (Main[i][j] == '0')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
 				}
 			}
 			else if (Select->y == 14)
 			{
-				if (i >= 12 && i <= 16 && Main[i][j] == '1')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
-				}
-				else if (i <= 11)
+				if (i >= 12 && i <= 16)
 				{
 					if (Main[i][j] == '1')
 					{
-						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 					}
 				}
-				else
+				else if (i <= 11)
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+					if (Main[i][j] == '0')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
 				}
 			}
 			
@@ -1517,38 +1538,52 @@ void ReplayRender(SelectCard * Select)
 		{
 			if (Select->y == 4)
 			{
-				if (i >= 0 && i <= 4 && Replay[i][j] == '1')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
-				}
-				else if (i >= 5)
+				if (i >= 0 && i <= 4)
 				{
 					if (Replay[i][j] == '1')
 					{
-						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 					}
 				}
-				else
+				else if (i >= 5)
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+					if (Replay[i][j] == '0')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
 				}
 			}
 			else if (Select->y == 10)
 			{
-				if (i >= 6 && i <= 10 && Replay[i][j] == '1')
-				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
-				}
-				else if (i <= 5)
+				if (i >= 6 && i <= 10)
 				{
 					if (Replay[i][j] == '1')
 					{
-						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 					}
 				}
-				else
+				else if (i <= 5)
 				{
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+					if (Replay[i][j] == '0')
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+					}
+					else
+					{
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 8);
+					}
 				}
 			}
 
@@ -1674,7 +1709,7 @@ int main()
 			system("cls");
 		}
 
-		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 		CreateCard();
 		Countdown();
 		Select.y = 0;
